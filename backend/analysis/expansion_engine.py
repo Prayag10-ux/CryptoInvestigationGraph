@@ -35,15 +35,18 @@ def expand_investigation(
         Global maximum number of unique wallets that can be
         investigated during this expansion.
     """
-
     if max_depth < 0:
         raise ValueError("max_depth cannot be negative.")
 
     if max_targets_per_wallet < 1:
-        raise ValueError("max_targets_per_wallet must be at least 1.")
+        raise ValueError(
+            "max_targets_per_wallet must be at least 1."
+        )
 
     if max_pages_per_wallet < 1:
-        raise ValueError("max_pages_per_wallet must be at least 1.")
+        raise ValueError(
+            "max_pages_per_wallet must be at least 1."
+        )
 
     if page_size < 1:
         raise ValueError("page_size must be at least 1.")
@@ -86,6 +89,11 @@ def expand_investigation(
             {
                 "address": address,
                 "depth": depth,
+                "node_type": (
+                    "investigated_wallet"
+                    if depth == 0
+                    else "related_wallet"
+                ),
                 "transaction_count": len(transactions),
             }
         )

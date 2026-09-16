@@ -13,13 +13,12 @@ def calculate_attribution(
     The result represents the strength of available evidence
     supporting a potential association with a known entity.
     """
-
     entity = get_entity(wallet_address)
 
     if not entity:
         return {
             "wallet_address": wallet_address,
-            "attributed": False,
+            "has_candidate": False,
             "entity_name": None,
             "entity_type": None,
             "confidence": 0.0,
@@ -29,7 +28,7 @@ def calculate_attribution(
                 {
                     "type": "unknown_entity",
                     "description": (
-                        "No known entity attribution was found "
+                        "No known entity association was found "
                         "for this wallet."
                     ),
                 }
@@ -48,31 +47,11 @@ def calculate_attribution(
         }
     ]
 
-    for item in evidence:
-        supporting_evidence.append(
-            {
-                "type": "behavioral_signal",
-                "code": item["code"],
-                "description": item["finding"],
-                "weight": 0.10,
-            }
-        )
-
     confidence = entity["source_reliability"]
-
-    behavioral_bonus = min(
-        len(evidence) * 0.02,
-        0.10,
-    )
-
-    confidence = min(
-        confidence + behavioral_bonus,
-        0.99,
-    )
 
     return {
         "wallet_address": wallet_address,
-        "attributed": True,
+        "has_candidate": True,
         "entity_name": entity["entity_name"],
         "entity_type": entity["entity_type"],
         "confidence": round(confidence, 2),

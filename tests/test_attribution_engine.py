@@ -19,13 +19,11 @@ def test_known_entity_gets_attribution():
         evidence,
     )
 
-    assert result["attributed"] is True
+    assert result["has_candidate"] is True
     assert result["entity_name"] == "Example Exchange"
     assert result["entity_type"] == "centralized_exchange"
-
     assert 0.90 <= result["confidence"] <= 0.99
-
-    assert len(result["supporting_evidence"]) >= 2
+    assert len(result["supporting_evidence"]) >= 1
     assert len(result["alternative_hypotheses"]) >= 1
 
 
@@ -37,11 +35,10 @@ def test_unknown_wallet_has_no_attribution():
         [],
     )
 
-    assert result["attributed"] is False
+    assert result["has_candidate"] is False
     assert result["entity_name"] is None
     assert result["entity_type"] is None
     assert result["confidence"] == 0.0
-
     assert len(result["supporting_evidence"]) == 0
     assert len(result["alternative_hypotheses"]) >= 1
 
@@ -66,4 +63,3 @@ def test_confidence_is_capped():
     )
 
     assert result["confidence"] <= 0.99
-    

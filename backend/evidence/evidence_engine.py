@@ -1,6 +1,39 @@
 from backend.models.transaction import Transaction
 
 
+def _wallet_transactions(
+    transactions: list[Transaction],
+    wallet_address: str,
+) -> list[Transaction]:
+    wallet = wallet_address.lower()
+
+    return [
+        tx
+        for tx in transactions
+        if tx.from_address.lower() == wallet
+        or (tx.to_address or "").lower() == wallet
+    ]
+
+
+def _build_provenance(
+    transactions: list[Transaction],
+    wallet_address: str,
+) -> dict:
+    relevant_transactions = _wallet_transactions(
+        transactions,
+        wallet_address,
+    )
+
+    return {
+        "source_type": "blockchain_transactions",
+        "wallet_address": wallet_address,
+        "transaction_count": len(relevant_transactions),
+        "transaction_hashes": [
+            tx.hash for tx in relevant_transactions
+        ],
+    }
+
+
 def generate_evidence(
     transactions: list[Transaction],
     wallet_address: str,
@@ -10,9 +43,16 @@ def generate_evidence(
     Convert behavioral signals into explainable evidence items.
 
     Evidence is investigative context, not proof of criminal activity.
-    """
 
+    Each evidence item includes provenance so investigators can
+    trace the finding back to the observed blockchain transactions.
+    """
     evidence = []
+
+    provenance = _build_provenance(
+        transactions,
+        wallet_address,
+    )
 
     if signals["fan_in"]:
         evidence.append(
@@ -28,6 +68,7 @@ def generate_evidence(
                     "A large number of distinct inbound sources can indicate "
                     "a collection or aggregation pattern that warrants review."
                 ),
+                "provenance": provenance,
             }
         )
 
@@ -45,6 +86,7 @@ def generate_evidence(
                     "A large number of outbound destinations can indicate "
                     "distribution or fund-dispersal behavior."
                 ),
+                "provenance": provenance,
             }
         )
 
@@ -62,6 +104,7 @@ def generate_evidence(
                     "Repeated failed transactions can provide behavioral "
                     "context and may warrant examination."
                 ),
+                "provenance": provenance,
             }
         )
 
@@ -80,6 +123,7 @@ def generate_evidence(
                     "Heavy dependence on one source can help investigators "
                     "understand the wallet's transaction relationships."
                 ),
+                "provenance": provenance,
             }
         )
 
@@ -97,6 +141,7 @@ def generate_evidence(
                     "Absence of a signal does not establish that a wallet "
                     "is legitimate or free from risk."
                 ),
+                "provenance": provenance,
             }
         )
 

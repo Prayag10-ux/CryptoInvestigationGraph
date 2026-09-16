@@ -25,7 +25,6 @@ def investigate_wallet(request: InvestigationRequest):
     Investigate an Ethereum wallet and selectively expand
     into important related wallets.
     """
-
     address = request.wallet_address.strip()
 
     if not is_valid_ethereum_address(address):
@@ -40,7 +39,9 @@ def investigate_wallet(request: InvestigationRequest):
             detail="Zero address cannot be investigated.",
         )
 
+    # ---------------------------------------------------------------
     # 1. Fetch transactions for the investigated wallet
+    # ---------------------------------------------------------------
     try:
         transactions = fetch_wallet_transactions(address)
     except (ConnectionError, TimeoutError, RuntimeError, ValueError) as exc:
@@ -49,7 +50,9 @@ def investigate_wallet(request: InvestigationRequest):
             detail=f"Blockchain data retrieval failed: {exc}",
         ) from exc
 
+    # ---------------------------------------------------------------
     # 2. Analyze the investigated wallet
+    # ---------------------------------------------------------------
     analysis = analyze_wallet(
         transactions,
         address,
@@ -77,7 +80,9 @@ def investigate_wallet(request: InvestigationRequest):
         signals,
     )
 
+    # ---------------------------------------------------------------
     # 3. Controlled network expansion
+    # ---------------------------------------------------------------
     try:
         expansion = expand_investigation(
             wallet_address=address,
@@ -92,7 +97,13 @@ def investigate_wallet(request: InvestigationRequest):
             detail=f"Investigation expansion failed: {exc}",
         ) from exc
 
+    # ---------------------------------------------------------------
     # 4. Attribute discovered wallets
+    #
+    # Attribution currently uses the entity registry directly.
+    # Detailed behavioral evidence for expanded wallets will be
+    # connected in the expansion layer.
+    # ---------------------------------------------------------------
     attributions = []
 
     for node in expansion["nodes"]:
@@ -100,7 +111,7 @@ def investigate_wallet(request: InvestigationRequest):
 
         wallet_attribution = calculate_attribution(
             wallet_address=wallet,
-            evidence=evidence if wallet == address.lower() else [],
+            evidence=evidence if wallet.lower() == address.lower() else [],
         )
 
         attributions.append(
@@ -111,15 +122,20 @@ def investigate_wallet(request: InvestigationRequest):
             }
         )
 
-    # 5. Return complete investigation result
+    # ---------------------------------------------------------------
+    # 5. Return structured investigation result
+    # ---------------------------------------------------------------
     return {
-        "wallet": address,
-        "transaction_count": len(transactions),
+        "investigation": {
+            "wallet_address": address,
+            "network": "ethereum",
+            "transaction_count": len(transactions),
+        },
         "analysis": analysis,
-        "signals": signals,
+        "risk_signals": signals,
         "fund_flow": fund_flow,
         "fund_flow_paths": fund_flow_paths,
         "evidence": evidence,
-        "expansion": expansion,
-        "attributions": attributions,
+        "graph": expansion,
+        "attribution": attributions,
     }
