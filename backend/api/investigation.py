@@ -1,3 +1,5 @@
+import uuid
+
 from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 
@@ -9,6 +11,8 @@ from backend.analysis.wallet_analysis import analyze_wallet
 from backend.attribution.attribution_engine import calculate_attribution
 from backend.blockchain.fetcher import fetch_wallet_transactions
 from backend.blockchain.validator import is_valid_ethereum_address
+from backend.cases.case_store import create_case
+from backend.cases.correlation_engine import find_related_cases
 from backend.evidence.evidence_engine import generate_evidence
 
 
@@ -17,6 +21,10 @@ router = APIRouter()
 
 class InvestigationRequest(BaseModel):
     wallet_address: str
+    # Optional caller-supplied case reference (e.g. an NCRP complaint
+    # number). If omitted, a case id is generated so the investigation
+    # can still be recorded and correlated against future cases.
+    case_id: str | None = None
 
 
 @router.post("/investigate")
@@ -123,10 +131,34 @@ def investigate_wallet(request: InvestigationRequest):
         )
 
     # ---------------------------------------------------------------
-    # 5. Return structured investigation result
+    # 5. Record this investigation as a case and check for
+    #    connections to previously investigated cases.
+    #
+    # A shared wallet across cases is a potential financial
+    # touchpoint, not evidence that the cases share an actor. See
+    # correlation_engine for the exact language used.
+    # ---------------------------------------------------------------
+    case_id = request.case_id or f"CASE-{uuid.uuid4().hex[:8]}"
+
+    touched_wallets = [node["address"] for node in expansion["nodes"]]
+
+    related_cases = find_related_cases(
+        case_id=case_id,
+        wallet_addresses=set(touched_wallets),
+    )
+
+    create_case(
+        case_id=case_id,
+        wallet_address=address,
+        related_wallets=touched_wallets,
+    )
+
+    # ---------------------------------------------------------------
+    # 6. Return structured investigation result
     # ---------------------------------------------------------------
     return {
         "investigation": {
+            "case_id": case_id,
             "wallet_address": address,
             "network": "ethereum",
             "transaction_count": len(transactions),
@@ -138,4 +170,5 @@ def investigate_wallet(request: InvestigationRequest):
         "evidence": evidence,
         "graph": expansion,
         "attribution": attributions,
+        "related_cases": related_cases,
     }
