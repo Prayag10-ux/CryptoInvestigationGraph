@@ -16,6 +16,12 @@ KNOWN_ENTITIES = {
         "label_source": "demo_registry",
         "source_reliability": 0.90,
     },
+    "0xbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb": {
+        "entity_name": "Example Exchange B",
+        "entity_type": "centralized_exchange",
+        "label_source": "demo_registry",
+        "source_reliability": 0.90,
+    },
 }
 
 

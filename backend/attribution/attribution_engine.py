@@ -54,32 +54,91 @@ def _behavioral_supporting_evidence(evidence: list[dict]) -> list[dict]:
     return items
 
 
-def _find_indirect_entity(
+def _find_all_connected_entities(
     wallet_address: str,
     edges: list[dict],
 ):
     """
-    Look for a direct transactional edge between this wallet and a
-    wallet that IS a known entity.
+    Find every distinct known entity this wallet has a direct
+    transactional edge to.
 
-    Returns (entity, direction_description) if found, else None.
+    Returns a list of (entity, direction_description) tuples, one per
+    distinct entity_name encountered (a wallet with multiple edges to
+    the same entity is only counted once). Order follows edge order.
 
     This only checks a single hop. It is a weak, explicitly-labeled
     signal, not a claim about this wallet's identity.
     """
     wallet = wallet_address.lower()
+    seen_entity_names = set()
+    connections = []
 
     for edge in edges:
         frm = (edge.get("from") or "").lower()
         to = (edge.get("to") or "").lower()
 
+        connected_address = None
+        direction = None
+
         if frm == wallet and is_known_entity(to):
-            return get_entity(to), "an outbound transaction to"
+            connected_address = to
+            direction = "an outbound transaction to"
+        elif to == wallet and is_known_entity(frm):
+            connected_address = frm
+            direction = "an inbound transaction from"
 
-        if to == wallet and is_known_entity(frm):
-            return get_entity(frm), "an inbound transaction from"
+        if connected_address is None:
+            continue
 
-    return None
+        entity = get_entity(connected_address)
+
+        if entity["entity_name"] in seen_entity_names:
+            continue
+
+        seen_entity_names.add(entity["entity_name"])
+        connections.append((entity, direction))
+
+    return connections
+
+
+def _conflicting_entity_contradicting_evidence(
+    primary_entity_name: str,
+    connections: list,
+) -> list[dict]:
+    """
+    Build contradicting-evidence items for any distinct known entity,
+    other than the primary candidate, that this wallet also has a
+    direct transactional edge to.
+
+    A wallet linked to more than one distinct known entity is a real,
+    observable fact that weakens confidence in any single one of
+    those associations being the full explanation. This is computed
+    directly from edges already present in the investigation graph --
+    nothing here is invented.
+    """
+    items = []
+
+    for entity, direction in connections:
+        if entity["entity_name"] == primary_entity_name:
+            continue
+
+        items.append(
+            {
+                "type": "conflicting_entity_signal",
+                "description": (
+                    f"This wallet also has {direction} a wallet "
+                    f"known to be associated with "
+                    f"{entity['entity_name']}, a different candidate "
+                    "entity than the one above. A wallet linked to "
+                    "more than one distinct known entity weakens "
+                    "confidence in any single association being the "
+                    "full explanation."
+                ),
+                "source": "derived_from_expansion_graph",
+            }
+        )
+
+    return items
 
 
 def calculate_attribution(
@@ -92,7 +151,7 @@ def calculate_attribution(
 
     This does NOT prove ownership. The result represents the strength
     of available evidence supporting a potential association with a
-    known entity, combining up to three sources:
+    known entity, combining up to four sources:
 
       1. A direct known-address registry match for this wallet, if
          one exists. This is the strongest signal.
@@ -104,14 +163,22 @@ def calculate_attribution(
          itself, but has a direct transactional edge to a wallet that
          does. Given at a deliberately lower confidence than a direct
          match.
+      4. Conflicting entity signals: if this wallet also has a direct
+         edge to a DIFFERENT known entity than the primary candidate,
+         that conflict is surfaced explicitly as contradicting
+         evidence. Confidence is not numerically penalized for this --
+         inventing a penalty would be fabricating precision that
+         isn't backed by real logic. The conflict is reported so a
+         human investigator can weigh it.
 
     edges, when provided, should be the "edges" list from the
     investigation's expansion graph (each item with "from"/"to"
     wallet addresses). If omitted, only direct registry matches are
-    considered.
+    considered, and no conflicting-entity check is possible.
     """
     entity = get_entity(wallet_address)
     behavioral_items = _behavioral_supporting_evidence(evidence)
+    connections = _find_all_connected_entities(wallet_address, edges or [])
 
     if entity:
         supporting_evidence = [
@@ -132,6 +199,11 @@ def calculate_attribution(
             MAX_CONFIDENCE,
         )
 
+        contradicting_evidence = _conflicting_entity_contradicting_evidence(
+            entity["entity_name"],
+            connections,
+        )
+
         return {
             "wallet_address": wallet_address,
             "has_candidate": True,
@@ -139,7 +211,7 @@ def calculate_attribution(
             "entity_type": entity["entity_type"],
             "confidence": round(confidence, 2),
             "supporting_evidence": supporting_evidence,
-            "contradicting_evidence": [],
+            "contradicting_evidence": contradicting_evidence,
             "alternative_hypotheses": [
                 {
                     "type": "shared_or_reused_address",
@@ -152,10 +224,8 @@ def calculate_attribution(
             ],
         }
 
-    indirect = _find_indirect_entity(wallet_address, edges or [])
-
-    if indirect:
-        connected_entity, direction = indirect
+    if connections:
+        connected_entity, direction = connections[0]
 
         supporting_evidence = [
             {
@@ -178,6 +248,11 @@ def calculate_attribution(
             MAX_CONFIDENCE,
         )
 
+        contradicting_evidence = _conflicting_entity_contradicting_evidence(
+            connected_entity["entity_name"],
+            connections,
+        )
+
         return {
             "wallet_address": wallet_address,
             "has_candidate": True,
@@ -185,7 +260,7 @@ def calculate_attribution(
             "entity_type": connected_entity["entity_type"],
             "confidence": round(confidence, 2),
             "supporting_evidence": supporting_evidence,
-            "contradicting_evidence": [],
+            "contradicting_evidence": contradicting_evidence,
             "alternative_hypotheses": [
                 {
                     "type": "unrelated_intermediary",
