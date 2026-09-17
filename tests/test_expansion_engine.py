@@ -202,3 +202,52 @@ def test_does_not_visit_same_wallet_twice():
 
     assert result["visited_wallet_count"] == 3
     assert fetch_counts[wallet_b] == 1
+
+def test_returns_per_wallet_transactions_for_downstream_evidence():
+    suspect = "0x1111111111111111111111111111111111111111"
+    wallet_a = "0x2222222222222222222222222222222222222222"
+
+    suspect_transactions = [
+        make_transaction(
+            "0xaaa",
+            suspect,
+            wallet_a,
+            10.0,
+        ),
+    ]
+
+    wallet_a_transactions = [
+        make_transaction(
+            "0xbbb",
+            wallet_a,
+            "0x3333333333333333333333333333333333333333",
+            5.0,
+        ),
+    ]
+
+    def fake_fetch(
+        address: str,
+        max_pages: int,
+        page_size: int,
+    ):
+        if address == suspect:
+            return suspect_transactions
+
+        if address == wallet_a:
+            return wallet_a_transactions
+
+        return []
+
+    with patch(
+        "backend.analysis.expansion_engine.fetch_wallet_transactions",
+        side_effect=fake_fetch,
+    ):
+        result = expand_investigation(
+            suspect,
+            max_depth=1,
+            max_targets_per_wallet=5,
+        )
+
+    assert "wallet_transactions" in result
+    assert result["wallet_transactions"][suspect] == suspect_transactions
+    assert result["wallet_transactions"][wallet_a] == wallet_a_transactions

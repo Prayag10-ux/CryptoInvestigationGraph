@@ -21,6 +21,8 @@ def create_case(
     case_id: str,
     wallet_address: str,
     related_wallets: list[str],
+    complaint_metadata: dict | None = None,
+    report: dict | None = None,
 ) -> dict:
     """
     Record a completed investigation as a case.
@@ -29,6 +31,16 @@ def create_case(
     every wallet discovered during expansion, so future correlation
     checks can detect shared infrastructure between independently
     filed cases.
+
+    complaint_metadata is caller-supplied context about the underlying
+    complaint (e.g. a complainant reference, filing date). It is
+    optional and stored as-is; this system has no access to a real
+    complaint-intake system, so nothing here is validated or enriched
+    beyond what the caller provided.
+
+    report, if provided, is the full investigator report generated for
+    this run, stored so the case can be retrieved later without
+    re-running the investigation.
 
     Recording a case does not assert any conclusion about the wallets
     it contains; it simply preserves what a single investigation
@@ -40,6 +52,8 @@ def create_case(
         "wallet_address": wallet_address.lower(),
         "wallet_addresses": {addr.lower() for addr in related_wallets},
         "created_at": datetime.now(timezone.utc).isoformat(),
+        "complaint_metadata": complaint_metadata,
+        "report": report,
     }
 
     _CASES[case_id] = case

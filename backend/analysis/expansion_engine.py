@@ -67,6 +67,7 @@ def expand_investigation(
 
     nodes = []
     edges = []
+    wallet_transactions: dict[str, list] = {}
 
     while wallets and len(visited) < max_wallets:
         current = wallets.pop(0)
@@ -84,6 +85,8 @@ def expand_investigation(
             max_pages=max_pages_per_wallet,
             page_size=page_size,
         )
+
+        wallet_transactions[address] = transactions
 
         nodes.append(
             {
@@ -146,4 +149,11 @@ def expand_investigation(
         "visited_wallet_count": len(visited),
         "nodes": nodes,
         "edges": edges,
+        # Raw transactions fetched per wallet during expansion, keyed
+        # by address. Not part of the public API graph contract —
+        # callers that want to expose the graph externally should
+        # pop this key first. Exists so downstream evidence/attribution
+        # can be computed for every discovered wallet without
+        # re-fetching data that was already retrieved here.
+        "wallet_transactions": wallet_transactions,
     }

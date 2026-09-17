@@ -7,13 +7,15 @@ from backend.analysis.expansion_engine import expand_investigation
 from backend.analysis.fund_flow import analyze_fund_flow
 from backend.analysis.fund_flow_traversal import build_fund_flow_paths
 from backend.analysis.risk_signals import calculate_risk_signals
+from backend.analysis.timeline import build_investigation_timeline
 from backend.analysis.wallet_analysis import analyze_wallet
 from backend.attribution.attribution_engine import calculate_attribution
 from backend.blockchain.fetcher import fetch_wallet_transactions
 from backend.blockchain.validator import is_valid_ethereum_address
-from backend.cases.case_store import create_case
+from backend.cases.case_store import create_case, get_case
 from backend.cases.correlation_engine import find_related_cases
 from backend.evidence.evidence_engine import generate_evidence
+from backend.reports.report_builder import build_investigator_report
 
 
 router = APIRouter()
@@ -25,6 +27,11 @@ class InvestigationRequest(BaseModel):
     # number). If omitted, a case id is generated so the investigation
     # can still be recorded and correlated against future cases.
     case_id: str | None = None
+    # Optional context about the underlying complaint (e.g. a
+    # complainant reference, filing date). Stored as-is and included
+    # in the investigator report; this system has no access to a
+    # real complaint-intake system, so nothing here is validated.
+    complaint_metadata: dict | None = None
 
 
 @router.post("/investigate")
@@ -108,18 +115,35 @@ def investigate_wallet(request: InvestigationRequest):
     # ---------------------------------------------------------------
     # 4. Attribute discovered wallets
     #
-    # Attribution currently uses the entity registry directly.
-    # Detailed behavioral evidence for expanded wallets will be
-    # connected in the expansion layer.
+    # Every discovered wallet gets its own behavioral evidence,
+    # computed from the transactions already fetched for it during
+    # expansion (no duplicate fetching). Attribution combines, per
+    # wallet: a direct registry match, behavioral corroboration, and
+    # an indirect association when the wallet has a direct edge to a
+    # known entity but no registry entry of its own.
     # ---------------------------------------------------------------
+    wallet_transactions = expansion.pop("wallet_transactions", {})
+
     attributions = []
 
     for node in expansion["nodes"]:
         wallet = node["address"]
 
+        if wallet.lower() == address.lower():
+            wallet_evidence = evidence
+        else:
+            node_transactions = wallet_transactions.get(wallet, [])
+            node_signals = calculate_risk_signals(node_transactions, wallet)
+            wallet_evidence = generate_evidence(
+                node_transactions,
+                wallet,
+                node_signals,
+            )
+
         wallet_attribution = calculate_attribution(
             wallet_address=wallet,
-            evidence=evidence if wallet.lower() == address.lower() else [],
+            evidence=wallet_evidence,
+            edges=expansion["edges"],
         )
 
         attributions.append(
@@ -131,7 +155,20 @@ def investigate_wallet(request: InvestigationRequest):
         )
 
     # ---------------------------------------------------------------
-    # 5. Record this investigation as a case and check for
+    # 5. Build a chronological timeline and the investigator report
+    #
+    # The timeline reorganizes already-observed transactions (across
+    # every wallet touched during expansion) into time order. The
+    # report assembles everything produced so far into one
+    # investigator-facing object; it computes no new conclusions.
+    # ---------------------------------------------------------------
+    timeline = build_investigation_timeline(
+        wallet_transactions={address: transactions, **wallet_transactions},
+        attributions=attributions,
+    )
+
+    # ---------------------------------------------------------------
+    # 6. Record this investigation as a case and check for
     #    connections to previously investigated cases.
     #
     # A shared wallet across cases is a potential financial
@@ -147,14 +184,31 @@ def investigate_wallet(request: InvestigationRequest):
         wallet_addresses=set(touched_wallets),
     )
 
+    investigator_report = build_investigator_report(
+        case_id=case_id,
+        wallet_address=address,
+        transaction_count=len(transactions),
+        analysis=analysis,
+        risk_signals=signals,
+        fund_flow_paths=fund_flow_paths,
+        graph=expansion,
+        attributions=attributions,
+        evidence=evidence,
+        timeline=timeline,
+        related_cases=related_cases,
+        complaint_metadata=request.complaint_metadata,
+    )
+
     create_case(
         case_id=case_id,
         wallet_address=address,
         related_wallets=touched_wallets,
+        complaint_metadata=request.complaint_metadata,
+        report=investigator_report,
     )
 
     # ---------------------------------------------------------------
-    # 6. Return structured investigation result
+    # 7. Return structured investigation result
     # ---------------------------------------------------------------
     return {
         "investigation": {
@@ -171,4 +225,28 @@ def investigate_wallet(request: InvestigationRequest):
         "graph": expansion,
         "attribution": attributions,
         "related_cases": related_cases,
+        "timeline": timeline,
+        "investigator_report": investigator_report,
     }
+
+
+@router.get("/cases/{case_id}")
+def get_case_by_id(case_id: str):
+    """
+    Retrieve a previously recorded case, including its stored
+    investigator report, by case id.
+
+    This only returns cases that were created by a prior /investigate
+    call in this process's lifetime -- the case store is in-memory,
+    not durable storage. See case_store for the MVP limitations of
+    this approach.
+    """
+    case = get_case(case_id)
+
+    if case is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No case found with id '{case_id}'.",
+        )
+
+    return case
