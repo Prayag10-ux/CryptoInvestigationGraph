@@ -100,17 +100,13 @@ def investigate_wallet(request: InvestigationRequest):
     # ---------------------------------------------------------------
     try:
         expansion = expand_investigation(
-            wallet_address=address,
-            max_depth=2,
-            max_targets_per_wallet=5,
-            max_pages_per_wallet=2,
-            page_size=100,
-        )
-    except (ConnectionError, TimeoutError, RuntimeError, ValueError) as exc:
-        raise HTTPException(
-            status_code=502,
-            detail=f"Investigation expansion failed: {exc}",
-        ) from exc
+    wallet_address=address,
+    max_depth=2,
+    max_targets_per_wallet=5,
+    max_pages_per_wallet=2,
+    page_size=100,
+    root_transactions=transactions,
+    )
 
     # ---------------------------------------------------------------
     # 4. Attribute discovered wallets

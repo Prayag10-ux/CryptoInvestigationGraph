@@ -9,6 +9,7 @@ def expand_investigation(
     max_pages_per_wallet: int = 2,
     page_size: int = 100,
     max_wallets: int = 25,
+    root_transactions: list | None = None,
 ) -> dict:
     """
     Perform controlled recursive investigation expansion.
@@ -19,21 +20,10 @@ def expand_investigation(
 
     Safety limits prevent uncontrolled API usage.
 
-    max_depth:
-        Maximum number of expansion levels.
-
-    max_targets_per_wallet:
-        Maximum counterparties selected from each wallet.
-
-    max_pages_per_wallet:
-        Maximum blockchain API pages fetched for each wallet.
-
-    page_size:
-        Number of transactions requested per API page.
-
-    max_wallets:
-        Global maximum number of unique wallets that can be
-        investigated during this expansion.
+    root_transactions:
+        Optional transactions already fetched for the root wallet.
+        When provided, they are reused instead of fetching the root
+        wallet again.
     """
     if max_depth < 0:
         raise ValueError("max_depth cannot be negative.")
@@ -80,11 +70,17 @@ def expand_investigation(
 
         visited.add(address)
 
-        transactions = fetch_wallet_transactions(
-            address=address,
-            max_pages=max_pages_per_wallet,
-            page_size=page_size,
-        )
+        if (
+            depth == 0
+            and root_transactions is not None
+        ):
+            transactions = root_transactions
+        else:
+            transactions = fetch_wallet_transactions(
+                address=address,
+                max_pages=max_pages_per_wallet,
+                page_size=page_size,
+            )
 
         wallet_transactions[address] = transactions
 
@@ -149,11 +145,5 @@ def expand_investigation(
         "visited_wallet_count": len(visited),
         "nodes": nodes,
         "edges": edges,
-        # Raw transactions fetched per wallet during expansion, keyed
-        # by address. Not part of the public API graph contract —
-        # callers that want to expose the graph externally should
-        # pop this key first. Exists so downstream evidence/attribution
-        # can be computed for every discovered wallet without
-        # re-fetching data that was already retrieved here.
         "wallet_transactions": wallet_transactions,
     }

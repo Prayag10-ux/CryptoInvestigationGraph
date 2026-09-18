@@ -251,3 +251,48 @@ def test_returns_per_wallet_transactions_for_downstream_evidence():
     assert "wallet_transactions" in result
     assert result["wallet_transactions"][suspect] == suspect_transactions
     assert result["wallet_transactions"][wallet_a] == wallet_a_transactions
+def test_reuses_pre_fetched_root_transactions():
+    suspect = "0x1111111111111111111111111111111111111111"
+    wallet_a = "0x2222222222222222222222222222222222222222"
+
+    suspect_transactions = [
+        make_transaction(
+            "0xaaa",
+            suspect,
+            wallet_a,
+            10.0,
+        ),
+    ]
+
+    wallet_a_transactions = []
+
+    fetch_counts = {}
+
+    def fake_fetch(
+        address: str,
+        max_pages: int,
+        page_size: int,
+    ):
+        fetch_counts[address] = fetch_counts.get(address, 0) + 1
+
+        if address == wallet_a:
+            return wallet_a_transactions
+
+        raise AssertionError(
+            "Root wallet was fetched again instead of "
+            "reusing root_transactions."
+        )
+
+    with patch(
+        "backend.analysis.expansion_engine.fetch_wallet_transactions",
+        side_effect=fake_fetch,
+    ):
+        result = expand_investigation(
+            suspect,
+            max_depth=1,
+            max_targets_per_wallet=5,
+            root_transactions=suspect_transactions,
+        )
+
+    assert result["wallet_transactions"][suspect] == suspect_transactions
+    assert fetch_counts[wallet_a] == 1
