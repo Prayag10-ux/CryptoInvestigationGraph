@@ -1,5 +1,5 @@
 "use client";
-
+import SiteHeader from "../components/SiteHeader";
 import Link from "next/link";
 import { useEffect, useMemo, useRef, useState } from "react";
 import {
@@ -742,113 +742,21 @@ export default function InvestigationPage() {
             {/* ============================================================
                 NAVIGATION
             ============================================================ */}
-
-            <header className="fixed left-1/2 top-4 z-50 w-[calc(100%-32px)] max-w-[1480px] -translate-x-1/2">
-                <div
-                    className={`flex h-[70px] items-center justify-between rounded-[20px] border px-5 text-[#EFE9E1] shadow-[0_16px_50px_rgba(30,25,22,0.24)] backdrop-blur-xl transition-all duration-1000 lg:px-7 ${traceRunning
-                        ? "border-[#72383D]/45 bg-[#292522] shadow-[0_18px_65px_rgba(114,56,61,0.20)]"
-                        : "border-[#EFE9E1]/10 bg-[#292522]/95"
-                        }`}
-                >
-                    <a
-                        href="/"
-                        className="group flex items-center gap-3"
-                    >
-                        <div
-                            className={`relative flex h-10 w-10 items-center justify-center rounded-[11px] border bg-[#322D29] transition-all duration-700 group-hover:border-[#72383D] group-hover:bg-[#72383D] ${traceRunning
-                                ? "border-[#72383D] shadow-[0_0_25px_rgba(114,56,61,0.45)]"
-                                : "border-[#EFE9E1]/20"
-                                }`}
-                        >
-                            <span className="font-mono text-[10px] font-bold tracking-[-0.05em]">
-                                CG
-                            </span>
-
-                            <span
-                                className={`absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[#72383D] ${traceRunning
-                                    ? "animate-ping"
-                                    : ""
-                                    }`}
-                            />
-                        </div>
-
-                        <div className="hidden leading-none sm:block">
-                            <p className="text-[12px] font-bold tracking-[0.14em]">
-                                CRYPTOGRAPH
-                            </p>
-
-                            <p className="mt-1 font-mono text-[7px] tracking-[0.22em] text-[#EFE9E1]/35">
-                                FINANCIAL INVESTIGATION
-                            </p>
-                        </div>
-                    </a>
-
-                    <nav className="hidden items-center gap-1 rounded-full border border-[#EFE9E1]/10 bg-[#1F1C1A]/75 p-1 md:flex">
-                        <a
-                            href="/"
-                            className="rounded-full px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#EFE9E1]/45 transition hover:bg-[#EFE9E1]/10 hover:text-[#EFE9E1]"
-                        >
-                            HOME
-                        </a>
-
-                        <a
-                            href="/investigate"
-                            className="rounded-full bg-[#EFE9E1] px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#72383D] shadow-sm"
-                        >
-                            INVESTIGATE
-                        </a>
-
-                        <a
-                            href="/#method"
-                            className="rounded-full px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#EFE9E1]/45 transition hover:bg-[#EFE9E1]/10 hover:text-[#EFE9E1]"
-                        >
-                            THE TRAIL
-                        </a>
-
-                        <a
-                            href="/evidence"
-                            className="rounded-full px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#EFE9E1]/45 transition hover:bg-[#EFE9E1]/10 hover:text-[#EFE9E1]"
-                        >
-                            EVIDENCE
-                        </a>
-                    </nav>
-
-                    <div className="flex items-center gap-3">
-                        <div
-                            className={`hidden items-center gap-2 rounded-full border px-4 py-2.5 transition-all duration-700 sm:flex ${traceRunning
-                                ? "border-[#72383D]/45 bg-[#72383D]/10"
-                                : "border-[#EFE9E1]/10"
-                                }`}
-                        >
-                            <span className="relative flex h-2 w-2">
-                                <span
-                                    className={`absolute inline-flex h-full w-full rounded-full bg-[#72383D]/50 ${traceRunning
-                                        ? "animate-ping"
-                                        : ""
-                                        }`}
-                                />
-
-                                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#72383D]" />
-                            </span>
-
-                            <span className="font-mono text-[8px] tracking-[0.14em] text-[#EFE9E1]/55">
-                                {traceRunning
-                                    ? "TRACE / ACTIVE"
-                                    : "ETH / LIVE"}
-                            </span>
-                        </div>
-
-                        <button
-                            type="button"
-                            onClick={resetGraph}
-                            className="flex h-10 items-center gap-2 rounded-[11px] bg-[#EFE9E1] px-4 text-[8px] font-bold tracking-[0.12em] text-[#322D29] transition hover:bg-[#72383D] hover:text-[#EFE9E1]"
-                        >
-                            <RotateCcw className="h-3 w-3" />
-                            RESET
-                        </button>
-                    </div>
-                </div>
-            </header>
+            
+<SiteHeader
+    activePage="investigation"
+    statusText={traceRunning ? "TRACE / ACTIVE" : "ETH / LIVE"}
+    rightAction={
+        <button
+            type="button"
+            onClick={resetGraph}
+            className="flex h-10 items-center gap-2 rounded-[11px] bg-[#EFE9E1] px-4 text-[8px] font-bold tracking-[0.12em] text-[#322D29] transition hover:bg-[#72383D] hover:text-[#EFE9E1]"
+        >
+            <RotateCcw className="h-3 w-3" />
+            RESET
+        </button>
+    }
+/>
 
             {/* ============================================================
                 CASE HEADER
@@ -861,7 +769,7 @@ export default function InvestigationPage() {
                             <div className="mb-4 flex items-center gap-3">
                                 <a
                                     href="/"
-                                    className="flex items-center gap-2 font-mono text-[9px] tracking-[0.14em] text-[#322D29]/35 transition hover:text-[#72383D]"
+                                    className="flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-[#322D29]/35 transition hover:text-[#72383D]"
                                 >
                                     <ArrowLeft className="h-3 w-3" />
                                     BACK TO OVERVIEW
@@ -871,12 +779,12 @@ export default function InvestigationPage() {
                             </div>
 
                             <div className="flex flex-wrap items-center gap-4">
-                                <p className="font-mono text-[10px] font-bold tracking-[0.15em] text-[#72383D]">
+                                <p className="font-mono text-[12px] font-bold tracking-[0.15em] text-[#72383D]">
                                     CASE / CG-001
                                 </p>
 
                                 <span
-                                    className={`rounded-full border px-3 py-1.5 font-mono text-[8px] font-bold tracking-[0.12em] transition-all duration-700 ${traceRunning
+                                    className={`rounded-full border px-3 py-1.5 font-mono text-[9px] font-bold tracking-[0.12em] transition-all duration-700 ${traceRunning
                                         ? "border-[#72383D]/50 bg-[#72383D] text-[#EFE9E1] shadow-[0_0_25px_rgba(114,56,61,0.25)]"
                                         : "border-[#72383D]/25 bg-[#72383D]/5 text-[#72383D]"
                                         }`}
@@ -967,7 +875,7 @@ export default function InvestigationPage() {
                         >
                             <div className="border-b border-[#322D29]/10 px-5 py-4">
                                 <div className="flex items-center justify-between">
-                                    <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                    <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                         CASE SUBJECT
                                     </p>
 
@@ -980,7 +888,7 @@ export default function InvestigationPage() {
                                     0x71...8F2
                                 </p>
 
-                                <p className="mt-2 text-[10px] leading-5 text-[#322D29]/40">
+                                <p className="mt-2 text-[12px] leading-5 text-[#322D29]/40">
                                     Primary address under investigation
                                 </p>
 
@@ -1000,7 +908,7 @@ export default function InvestigationPage() {
 
                         <div className="border border-[#322D29]/15 bg-[#D9D9D9]/35">
                             <div className="border-b border-[#322D29]/10 px-5 py-4">
-                                <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                     SEARCH NETWORK
                                 </p>
                             </div>
@@ -1015,7 +923,7 @@ export default function InvestigationPage() {
                                             setSearch(e.target.value)
                                         }
                                         placeholder="Search node..."
-                                        className="w-full bg-transparent font-mono text-[10px] outline-none placeholder:text-[#322D29]/30"
+                                        className="w-full bg-transparent font-mono text-[12px] outline-none placeholder:text-[#322D29]/30"
                                     />
                                 </div>
                             </div>
@@ -1024,7 +932,7 @@ export default function InvestigationPage() {
                         <div className="border border-[#322D29]/15 bg-[#D9D9D9]/35">
                             <div className="border-b border-[#322D29]/10 px-5 py-4">
                                 <div className="flex items-center justify-between">
-                                    <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                    <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                         FILTER GRAPH
                                     </p>
 
@@ -1047,7 +955,7 @@ export default function InvestigationPage() {
                                                 filter,
                                             )
                                         }
-                                        className={`flex w-full items-center justify-between px-3 py-3 text-left text-[9px] font-bold tracking-[0.13em] transition ${activeFilter === filter
+                                        className={`flex w-full items-center justify-between px-3 py-3 text-left text-[11px] font-bold tracking-[0.13em] transition ${activeFilter === filter
                                             ? "bg-[#322D29] text-[#EFE9E1]"
                                             : "text-[#322D29]/45 hover:bg-[#EFE9E1]"
                                             }`}
@@ -1065,7 +973,7 @@ export default function InvestigationPage() {
 
                         <div className="border border-[#322D29]/15 bg-[#D9D9D9]/35">
                             <div className="border-b border-[#322D29]/10 px-5 py-4">
-                                <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                     BEHAVIOUR
                                 </p>
                             </div>
@@ -1129,19 +1037,19 @@ export default function InvestigationPage() {
                         >
                             <div>
                                 <div className="flex items-center gap-3">
-                                    <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                    <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                         TRANSACTION GRAPH
                                     </p>
 
                                     {traceRunning && (
-                                        <span className="flex items-center gap-2 rounded-full border border-[#72383D]/25 bg-[#72383D]/10 px-2.5 py-1 font-mono text-[6px] font-bold tracking-[0.12em] text-[#72383D]">
+                                        <span className="flex items-center gap-2 rounded-full border border-[#72383D]/25 bg-[#72383D]/10 px-2.5 py-1 font-mono text-[9px] font-bold tracking-[0.12em] text-[#72383D]">
                                             <span className="h-1.5 w-1.5 animate-pulse rounded-full bg-[#72383D]" />
                                             TRACE SCANNING
                                         </span>
                                     )}
                                 </div>
 
-                                <p className="mt-1 font-mono text-[7px] tracking-[0.12em] text-[#322D29]/35">
+                                <p className="mt-1 font-mono text-[9px] tracking-[0.12em] text-[#322D29]/35">
                                     RELATIONSHIP VIEW /{" "}
                                     {tracedNode
                                         ? `${Math.max(
@@ -1166,7 +1074,7 @@ export default function InvestigationPage() {
                                     }
                                 />
 
-                                <span className="min-w-[48px] text-center font-mono text-[8px] text-[#322D29]/45">
+                                <span className="min-w-[48px] text-center font-mono text-[9px] text-[#322D29]/45">
                                     {Math.round(
                                         zoom * 100,
                                     )}
@@ -1441,12 +1349,12 @@ export default function InvestigationPage() {
                                                 <span className="relative inline-flex h-2 w-2 rounded-full bg-[#72383D]" />
                                             </span>
 
-                                            <span className="font-mono text-[7px] font-bold tracking-[0.13em] text-[#72383D]">
+                                            <span className="font-mono text-[9px] font-bold tracking-[0.13em] text-[#72383D]">
                                                 FOLLOWING PATH
                                             </span>
                                         </div>
 
-                                        <span className="font-mono text-[7px] text-[#322D29]/35">
+                                        <span className="font-mono text-[9px] text-[#322D29]/35">
                                             {Math.min(
                                                 traceStep,
                                                 traceEdges.length,
@@ -1538,14 +1446,14 @@ export default function InvestigationPage() {
 
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <p className="font-mono text-[8px] font-bold tracking-[0.15em]">
+                                                    <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
                                                         NODE INSPECTION
                                                     </p>
 
                                                     {tracedNode?.id ===
                                                         selectedNode.id && (
                                                             <span
-                                                                className={`rounded-full bg-[#72383D] px-2 py-0.5 font-mono text-[6px] font-bold tracking-[0.1em] text-[#EFE9E1] ${traceRunning
+                                                                className={`rounded-full bg-[#72383D] px-2 py-0.5 font-mono text-[9px] font-bold tracking-[0.1em] text-[#EFE9E1] ${traceRunning
                                                                     ? "animate-pulse"
                                                                     : ""
                                                                     }`}
@@ -1555,7 +1463,7 @@ export default function InvestigationPage() {
                                                         )}
                                                 </div>
 
-                                                <p className="mt-1 text-[9px] text-[#322D29]/35">
+                                                <p className="mt-1 text-[11px] text-[#322D29]/35">
                                                     {
                                                         selectedNode.relationship
                                                     }
@@ -1590,7 +1498,7 @@ export default function InvestigationPage() {
 
                                         {selectedNode.label && (
                                             <span
-                                                className={`mt-3 inline-flex rounded-full border px-2.5 py-1 text-[7px] font-bold tracking-[0.14em] ${selectedNode.suspicious
+                                                className={`mt-3 inline-flex rounded-full border px-2.5 py-1 text-[9px] font-bold tracking-[0.14em] ${selectedNode.suspicious
                                                     ? "border-[#72383D]/30 bg-[#72383D]/5 text-[#72383D]"
                                                     : "border-[#322D29]/15 text-[#322D29]/45"
                                                     }`}
@@ -1618,12 +1526,12 @@ export default function InvestigationPage() {
                                         </div>
 
                                         <div className="mt-3 border border-[#322D29]/10 px-4 py-3">
-                                            <p className="font-mono text-[7px] tracking-[0.14em] text-[#322D29]/30">
+                                            <p className="font-mono text-[9px] tracking-[0.14em] text-[#322D29]/30">
                                                 RELATIONSHIP
                                             </p>
 
                                             <p
-                                                className={`mt-2 text-[10px] font-bold tracking-[0.1em] ${selectedNode.suspicious
+                                                className={`mt-2 text-[12px] font-bold tracking-[0.1em] ${selectedNode.suspicious
                                                     ? "text-[#72383D]"
                                                     : ""
                                                     }`}
@@ -1643,7 +1551,7 @@ export default function InvestigationPage() {
                                             : "border-[#322D29]/10"
                                             }`}
                                     >
-                                        <span className="font-mono text-[7px] tracking-[0.13em] text-[#322D29]/35">
+                                        <span className="font-mono text-[9px] tracking-[0.13em] text-[#322D29]/35">
                                             {traceRunning &&
                                                 tracedNode?.id ===
                                                 selectedNode.id
@@ -1668,7 +1576,7 @@ export default function InvestigationPage() {
                                             onClick={
                                                 traceSelectedNode
                                             }
-                                            className={`group flex items-center gap-2 rounded-[7px] px-3 py-2 text-[8px] font-bold tracking-[0.13em] transition-all duration-300 ${tracedNode?.id ===
+                                            className={`group flex items-center gap-2 rounded-[7px] px-3 py-2 text-[9px] font-bold tracking-[0.13em] transition-all duration-300 ${tracedNode?.id ===
                                                 selectedNode.id
                                                 ? traceRunning
                                                     ? "bg-[#72383D] text-[#EFE9E1] shadow-[0_0_25px_rgba(114,56,61,0.30)]"
@@ -1710,7 +1618,7 @@ export default function InvestigationPage() {
                                         }`}
                                 />
 
-                                <span className="font-mono text-[7px] font-bold tracking-[0.13em]">
+                                <span className="font-mono text-[9px] font-bold tracking-[0.13em]">
                                     {
                                         searchedNodes.length
                                     }{" "}
@@ -1746,13 +1654,13 @@ export default function InvestigationPage() {
                                     </span>
 
                                     <div>
-                                        <span className="font-mono text-[7px] font-bold tracking-[0.13em] text-[#72383D]">
+                                        <span className="font-mono text-[9px] font-bold tracking-[0.13em] text-[#72383D]">
                                             {traceRunning
                                                 ? "TRACE IN PROGRESS"
                                                 : "TRACE COMPLETE"}
                                         </span>
 
-                                        <p className="mt-1 font-mono text-[6px] tracking-[0.12em] text-[#322D29]/40">
+                                        <p className="mt-1 font-mono text-[9px] tracking-[0.12em] text-[#322D29]/40">
                                             {
                                                 tracedNode.address
                                             }{" "}
@@ -1803,7 +1711,7 @@ export default function InvestigationPage() {
                 <div className="mx-auto max-w-[1600px] px-6 py-24 lg:px-10">
                     <div className="grid gap-16 lg:grid-cols-[0.65fr_1.35fr]">
                         <div>
-                            <p className="font-mono text-[9px] text-[#AC9C8D]">
+                            <p className="font-mono text-[11px] text-[#AC9C8D]">
                                 02 / TRANSACTION TRAIL
                             </p>
 
@@ -1840,11 +1748,11 @@ export default function InvestigationPage() {
                                 </div>
 
                                 <div>
-                                    <p className="text-[8px] font-bold tracking-[0.14em]">
+                                    <p className="text-[9px] font-bold tracking-[0.14em]">
                                         ACTIVE TRACE
                                     </p>
 
-                                    <p className="mt-1 font-mono text-[8px] text-[#EFE9E1]/35">
+                                    <p className="mt-1 font-mono text-[9px] text-[#EFE9E1]/35">
                                         {tracedNode
                                             ? `${traceEdges.length} GRAPH RELATIONSHIPS`
                                             : "4 TRANSACTION EVENTS"}
@@ -1884,7 +1792,7 @@ export default function InvestigationPage() {
                 <div className="mx-auto max-w-[1600px] px-6 py-24 lg:px-10">
                     <div className="grid gap-16 lg:grid-cols-[0.65fr_1.35fr]">
                         <div>
-                            <p className="font-mono text-[9px] text-[#72383D]">
+                            <p className="font-mono text-[11px] text-[#72383D]">
                                 03 / FINDINGS
                             </p>
 
@@ -1931,7 +1839,7 @@ export default function InvestigationPage() {
                 <div className="mx-auto max-w-[1600px] px-6 py-24 lg:px-10">
                     <div className="grid gap-16 lg:grid-cols-[0.65fr_1.35fr]">
                         <div>
-                            <p className="font-mono text-[9px] text-[#72383D]">
+                            <p className="font-mono text-[11px] text-[#72383D]">
                                 04 / EVIDENCE
                             </p>
 
@@ -1968,7 +1876,7 @@ export default function InvestigationPage() {
             <div className="pt-5">
                 <Link
                     href="/evidence"
-                    className="group inline-flex items-center gap-3 bg-[#72383D] px-5 py-3.5 text-[8px] font-bold tracking-[0.14em] text-[#EFE9E1] shadow-[0_8px_20px_rgba(114,56,61,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#322D29] hover:shadow-[0_12px_30px_rgba(50,45,41,0.20)]"
+                    className="group inline-flex items-center gap-3 bg-[#72383D] px-5 py-3.5 text-[9px] font-bold tracking-[0.14em] text-[#EFE9E1] shadow-[0_8px_20px_rgba(114,56,61,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#322D29] hover:shadow-[0_12px_30px_rgba(50,45,41,0.20)]"
                 >
                     VIEW EVIDENCE
                     <ArrowRight className="h-3.5 w-3.5 transition-transform duration-300 group-hover:translate-x-1" />
@@ -1985,7 +1893,7 @@ export default function InvestigationPage() {
                     : ""
                     }`}
             >
-                <div className="mx-auto flex max-w-[1600px] flex-col gap-5 px-6 py-9 text-[8px] font-semibold tracking-[0.17em] text-[#EFE9E1]/35 sm:flex-row sm:items-center sm:justify-between lg:px-10">
+                <div className="mx-auto flex max-w-[1600px] flex-col gap-5 px-6 py-9 text-[9px] font-semibold tracking-[0.17em] text-[#EFE9E1]/35 sm:flex-row sm:items-center sm:justify-between lg:px-10">
                     <span>
                         CRYPTOGRAPH / INVESTIGATION WORKSPACE
                     </span>
@@ -2108,11 +2016,11 @@ function CaseStat({
 }) {
     return (
         <div>
-            <p className="font-mono text-[7px] font-bold tracking-[0.15em] text-[#322D29]/30">
+            <p className="font-mono text-[9px] font-bold tracking-[0.15em] text-[#322D29]/30">
                 {label}
             </p>
 
-            <p className="mt-2 font-mono text-[10px] font-bold tracking-[0.05em]">
+            <p className="mt-2 font-mono text-[12px] font-bold tracking-[0.05em]">
                 {value}
             </p>
         </div>
@@ -2132,11 +2040,11 @@ function MetricBox({
 }) {
     return (
         <div className="border border-[#322D29]/10 bg-[#EFE9E1]/50 p-3">
-            <p className="font-mono text-[6px] font-bold tracking-[0.14em] text-[#322D29]/30">
+            <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-[#322D29]/30">
                 {label}
             </p>
 
-            <p className="mt-2 font-mono text-[10px] font-bold">
+            <p className="mt-2 font-mono text-[12px] font-bold">
                 {value}
             </p>
         </div>
@@ -2397,7 +2305,7 @@ function WorkspaceNode({
 
             {node.label && (
                 <span
-                    className={`absolute left-1/2 top-full mt-4 -translate-x-1/2 whitespace-nowrap text-[9px] font-bold tracking-[0.15em] transition-all duration-500 ${node.suspicious ||
+                    className={`absolute left-1/2 top-full mt-4 -translate-x-1/2 whitespace-nowrap text-[11px] font-bold tracking-[0.15em] transition-all duration-500 ${node.suspicious ||
                         selected ||
                         traced
                         ? "text-[#72383D]"
@@ -2414,7 +2322,7 @@ function WorkspaceNode({
             {/* address */}
 
             <span
-                className={`absolute left-1/2 top-full mt-9 -translate-x-1/2 whitespace-nowrap font-mono text-[8px] transition-all duration-500 ${reached
+                className={`absolute left-1/2 top-full mt-9 -translate-x-1/2 whitespace-nowrap font-mono text-[9px] transition-all duration-500 ${reached
                     ? "text-[#72383D]/75"
                     : "text-[#322D29]/35"
                     }`}
@@ -2451,7 +2359,7 @@ function LegendItem({
                     }`}
             />
 
-            <span className="font-mono text-[7px] font-bold tracking-[0.12em] text-[#322D29]/45">
+            <span className="font-mono text-[9px] font-bold tracking-[0.12em] text-[#322D29]/45">
                 {label}
             </span>
         </div>
@@ -2478,12 +2386,12 @@ function Behavior({
                     {icon}
                 </span>
 
-                <span className="max-w-[150px] text-[8px] font-bold leading-4 tracking-[0.08em]">
+                <span className="max-w-[150px] text-[9px] font-bold leading-4 tracking-[0.08em]">
                     {title}
                 </span>
             </div>
 
-            <span className="font-mono text-[8px] text-[#72383D]">
+            <span className="font-mono text-[9px] text-[#72383D]">
                 {detail}
             </span>
         </div>
@@ -2526,7 +2434,7 @@ function TrailRow({
             }}
         >
             <div>
-                <p className="font-mono text-[8px] text-[#EFE9E1]/30">
+                <p className="font-mono text-[9px] text-[#EFE9E1]/30">
                     {time} UTC
                 </p>
 
@@ -2543,7 +2451,7 @@ function TrailRow({
                 </p>
             </div>
 
-            <div className="font-mono text-[9px] leading-7">
+            <div className="font-mono text-[11px] leading-7">
                 <p className="text-[#EFE9E1]/60">
                     {from}
                 </p>
@@ -2559,7 +2467,7 @@ function TrailRow({
 
             <div className="flex items-center justify-between sm:justify-end sm:gap-5">
                 <span
-                    className={`text-[8px] font-bold tracking-[0.14em] ${highlighted
+                    className={`text-[9px] font-bold tracking-[0.14em] ${highlighted
                         ? "text-[#AC9C8D]"
                         : "text-[#EFE9E1]/30"
                         } ${traceActive
@@ -2607,7 +2515,7 @@ function Finding({
                 : ""
                 }`}
         >
-            <span className="font-mono text-[8px] text-[#72383D]">
+            <span className="font-mono text-[9px] text-[#72383D]">
                 {number}
             </span>
 
@@ -2621,17 +2529,17 @@ function Finding({
             </span>
 
             <div>
-                <p className="text-[10px] font-bold tracking-[0.12em]">
+                <p className="text-[12px] font-bold tracking-[0.12em]">
                     {title}
                 </p>
 
-                <p className="mt-2 max-w-xl text-[10px] leading-5 text-[#322D29]/40">
+                <p className="mt-2 max-w-xl text-[12px] leading-5 text-[#322D29]/40">
                     {detail}
                 </p>
             </div>
 
             <span
-                className={`font-mono text-[10px] font-bold text-[#72383D] ${traceActive
+                className={`font-mono text-[12px] font-bold text-[#72383D] ${traceActive
                     ? "animate-pulse"
                     : ""
                     }`}
@@ -2682,11 +2590,11 @@ function EvidenceCard({
                 </div>
 
                 <div>
-                    <p className="text-[10px] font-bold tracking-[0.12em]">
+                    <p className="text-[12px] font-bold tracking-[0.12em]">
                         {title}
                     </p>
 
-                    <p className="mt-2 text-[10px] text-[#322D29]/40">
+                    <p className="mt-2 text-[12px] text-[#322D29]/40">
                         {detail}
                     </p>
                 </div>

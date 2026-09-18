@@ -1,5 +1,5 @@
 "use client";
-
+import SiteHeader from "../components/SiteHeader";
 import { useMemo, useState } from "react";
 import {
     ArrowLeft,
@@ -154,84 +154,7 @@ export default function EvidencePage() {
                 NAVIGATION
             ============================================================ */}
 
-            <header className="fixed left-1/2 top-4 z-50 w-[calc(100%-32px)] max-w-[1480px] -translate-x-1/2">
-                <div className="flex h-[70px] items-center justify-between rounded-[20px] border border-[#EFE9E1]/10 bg-[#292522]/95 px-5 text-[#EFE9E1] shadow-[0_16px_50px_rgba(30,25,22,0.24)] backdrop-blur-xl lg:px-7">
-                    <a
-                        href="/"
-                        className="group flex items-center gap-3"
-                    >
-                        <div className="relative flex h-10 w-10 items-center justify-center rounded-[11px] border border-[#EFE9E1]/20 bg-[#322D29] transition-all duration-300 group-hover:border-[#72383D] group-hover:bg-[#72383D]">
-                            <span className="font-mono text-[10px] font-bold tracking-[-0.05em]">
-                                CG
-                            </span>
-
-                            <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[#72383D]" />
-                        </div>
-
-                        <div className="hidden leading-none sm:block">
-                            <p className="text-[12px] font-bold tracking-[0.14em]">
-                                CRYPTOGRAPH
-                            </p>
-
-                            <p className="mt-1 font-mono text-[7px] tracking-[0.22em] text-[#EFE9E1]/35">
-                                FINANCIAL INVESTIGATION
-                            </p>
-                        </div>
-                    </a>
-
-                    <nav className="hidden items-center gap-1 rounded-full border border-[#EFE9E1]/10 bg-[#1F1C1A]/75 p-1 md:flex">
-                        <a
-                            href="/"
-                            className="rounded-full px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#EFE9E1]/45 transition hover:bg-[#EFE9E1]/10 hover:text-[#EFE9E1]"
-                        >
-                            HOME
-                        </a>
-
-                        <a
-                            href="/investigation"
-                            className="rounded-full px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#EFE9E1]/45 transition hover:bg-[#EFE9E1]/10 hover:text-[#EFE9E1]"
-                        >
-                            INVESTIGATE
-                        </a>
-
-                        <a
-                            href="/#method"
-                            className="rounded-full px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#EFE9E1]/45 transition hover:bg-[#EFE9E1]/10 hover:text-[#EFE9E1]"
-                        >
-                            THE TRAIL
-                        </a>
-
-                        <a
-                            href="/evidence"
-                            className="rounded-full bg-[#EFE9E1] px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#72383D] shadow-sm"
-                        >
-                            EVIDENCE
-                        </a>
-                    </nav>
-
-                    <div className="flex items-center gap-3">
-                        <div className="hidden items-center gap-2 rounded-full border border-[#EFE9E1]/10 px-4 py-2.5 sm:flex">
-                            <span className="relative flex h-2 w-2">
-                                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#72383D]/50" />
-
-                                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#72383D]" />
-                            </span>
-
-                            <span className="font-mono text-[8px] tracking-[0.14em] text-[#EFE9E1]/55">
-                                ETH / LIVE
-                            </span>
-                        </div>
-
-                        <a
-                            href="/investigation"
-                            className="flex h-10 items-center gap-2 rounded-[11px] bg-[#EFE9E1] px-4 text-[8px] font-bold tracking-[0.12em] text-[#322D29] transition hover:bg-[#72383D] hover:text-[#EFE9E1]"
-                        >
-                            <ArrowLeft className="h-3 w-3" />
-                            INVESTIGATION
-                        </a>
-                    </div>
-                </div>
-            </header>
+            <SiteHeader activePage="evidence" />
 
             {/* ============================================================
                 CASE HEADER
@@ -244,7 +167,7 @@ export default function EvidencePage() {
                             <div className="mb-5 flex items-center gap-3">
                                 <a
                                     href="/investigation"
-                                    className="flex items-center gap-2 font-mono text-[9px] tracking-[0.14em] text-[#322D29]/35 transition hover:text-[#72383D]"
+                                    className="flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-[#322D29]/35 transition hover:text-[#72383D]"
                                 >
                                     <ArrowLeft className="h-3 w-3" />
                                     BACK TO INVESTIGATION
@@ -254,11 +177,11 @@ export default function EvidencePage() {
                             </div>
 
                             <div className="flex flex-wrap items-center gap-4">
-                                <p className="font-mono text-[10px] font-bold tracking-[0.15em] text-[#72383D]">
+                                <p className="font-mono text-[12px] font-bold tracking-[0.15em] text-[#72383D]">
                                     CASE / CG-001
                                 </p>
 
-                                <span className="rounded-full border border-[#72383D]/25 bg-[#72383D]/5 px-3 py-1.5 font-mono text-[8px] font-bold tracking-[0.12em] text-[#72383D]">
+                                <span className="rounded-full border border-[#72383D]/25 bg-[#72383D]/5 px-3 py-1.5 font-mono text-[9px] font-bold tracking-[0.12em] text-[#72383D]">
                                     EVIDENCE ACTIVE
                                 </span>
                             </div>
@@ -314,12 +237,12 @@ export default function EvidencePage() {
                             <div className="flex items-center gap-3">
                                 <FileCheck2 className="h-4 w-4 text-[#72383D]" />
 
-                                <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                     CASE SUMMARY
                                 </p>
                             </div>
 
-                            <span className="font-mono text-[7px] tracking-[0.12em] text-[#322D29]/30">
+                            <span className="font-mono text-[9px] tracking-[0.12em] text-[#322D29]/30">
                                 CG-001
                             </span>
                         </div>
@@ -359,7 +282,7 @@ export default function EvidencePage() {
                             <div className="flex items-center gap-3">
                                 <ShieldCheck className="h-4 w-4 text-[#72383D]" />
 
-                                <p className="font-mono text-[9px] font-bold tracking-[0.15em] text-[#72383D]">
+                                <p className="font-mono text-[11px] font-bold tracking-[0.15em] text-[#72383D]">
                                     EVIDENCE INTEGRITY
                                 </p>
                             </div>
@@ -372,7 +295,7 @@ export default function EvidencePage() {
                                         100%
                                     </p>
 
-                                    <p className="mt-2 text-[9px] text-[#322D29]/40">
+                                    <p className="mt-2 text-[11px] text-[#322D29]/40">
                                         OBSERVED ITEMS VERIFIED
                                     </p>
                                 </div>
@@ -384,7 +307,7 @@ export default function EvidencePage() {
                                 <div className="h-full w-full bg-[#72383D]" />
                             </div>
 
-                            <p className="mt-4 font-mono text-[7px] leading-5 tracking-[0.08em] text-[#322D29]/35">
+                            <p className="mt-4 font-mono text-[9px] leading-5 tracking-[0.08em] text-[#322D29]/35">
                                 Evidence is linked to observable
                                 transaction activity within the
                                 current case.
@@ -402,7 +325,7 @@ export default function EvidencePage() {
                 <div className="mx-auto max-w-[1600px] px-6 py-24 lg:px-10">
                     <div className="grid gap-16 lg:grid-cols-[0.65fr_1.35fr]">
                         <div>
-                            <p className="font-mono text-[9px] text-[#72383D]">
+                            <p className="font-mono text-[11px] text-[#72383D]">
                                 01 / TRANSACTION PROVENANCE
                             </p>
 
@@ -423,11 +346,11 @@ export default function EvidencePage() {
                                 </div>
 
                                 <div>
-                                    <p className="text-[8px] font-bold tracking-[0.13em]">
+                                    <p className="text-[9px] font-bold tracking-[0.13em]">
                                         BLOCKCHAIN NATIVE
                                     </p>
 
-                                    <p className="mt-1 font-mono text-[7px] text-[#322D29]/35">
+                                    <p className="mt-1 font-mono text-[9px] text-[#322D29]/35">
                                         SOURCE DATA / ETHEREUM
                                     </p>
                                 </div>
@@ -450,7 +373,7 @@ export default function EvidencePage() {
                                                 filter,
                                             )
                                         }
-                                        className={`px-3 py-2 font-mono text-[7px] font-bold tracking-[0.12em] transition ${activeSection ===
+                                        className={`px-3 py-2 font-mono text-[9px] font-bold tracking-[0.12em] transition ${activeSection ===
                                                 filter
                                                 ? "bg-[#322D29] text-[#EFE9E1]"
                                                 : "border border-[#322D29]/10 text-[#322D29]/40 hover:border-[#72383D]/25 hover:text-[#72383D]"
@@ -489,7 +412,7 @@ export default function EvidencePage() {
                 <div className="mx-auto max-w-[1600px] px-6 py-24 lg:px-10">
                     <div className="grid gap-16 lg:grid-cols-[0.65fr_1.35fr]">
                         <div>
-                            <p className="font-mono text-[9px] text-[#AC9C8D]">
+                            <p className="font-mono text-[11px] text-[#AC9C8D]">
                                 02 / RELATIONSHIP PATH
                             </p>
 
@@ -548,7 +471,7 @@ export default function EvidencePage() {
                 <div className="mx-auto max-w-[1600px] px-6 py-24 lg:px-10">
                     <div className="grid gap-16 lg:grid-cols-[0.65fr_1.35fr]">
                         <div>
-                            <p className="font-mono text-[9px] text-[#72383D]">
+                            <p className="font-mono text-[11px] text-[#72383D]">
                                 03 / BEHAVIOURAL EVIDENCE
                             </p>
 
@@ -609,7 +532,7 @@ export default function EvidencePage() {
                 <div className="mx-auto max-w-[1600px] px-6 py-24 lg:px-10">
                     <div className="grid gap-16 lg:grid-cols-[0.65fr_1.35fr]">
                         <div>
-                            <p className="font-mono text-[9px] text-[#72383D]">
+                            <p className="font-mono text-[11px] text-[#72383D]">
                                 04 / CASE NOTES
                             </p>
 
@@ -629,12 +552,12 @@ export default function EvidencePage() {
                                 <div className="flex items-center gap-3">
                                     <FileText className="h-4 w-4 text-[#72383D]" />
 
-                                    <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                    <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                         INVESTIGATOR NOTE
                                     </p>
                                 </div>
 
-                                <span className="font-mono text-[7px] text-[#322D29]/30">
+                                <span className="font-mono text-[9px] text-[#322D29]/30">
                                     NOTE / 001
                                 </span>
                             </div>
@@ -685,11 +608,11 @@ export default function EvidencePage() {
                                     </div>
 
                                     <div>
-                                        <p className="font-mono text-[8px] font-bold tracking-[0.15em] text-[#72383D]">
+                                        <p className="font-mono text-[9px] font-bold tracking-[0.15em] text-[#72383D]">
                                             05 / EVIDENCE PACKAGE
                                         </p>
 
-                                        <p className="mt-1 font-mono text-[7px] tracking-[0.1em] text-[#322D29]/35">
+                                        <p className="mt-1 font-mono text-[9px] tracking-[0.1em] text-[#322D29]/35">
                                             CASE / CG-001
                                         </p>
                                     </div>
@@ -711,7 +634,7 @@ export default function EvidencePage() {
                                 <button
                                     type="button"
                                     onClick={generatePackage}
-                                    className="group flex min-w-[190px] items-center justify-center gap-3 bg-[#72383D] px-6 py-4 text-[8px] font-bold tracking-[0.14em] text-[#EFE9E1] shadow-[0_10px_25px_rgba(114,56,61,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#322D29]"
+                                    className="group flex min-w-[190px] items-center justify-center gap-3 bg-[#72383D] px-6 py-4 text-[9px] font-bold tracking-[0.14em] text-[#EFE9E1] shadow-[0_10px_25px_rgba(114,56,61,0.18)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#322D29]"
                                 >
                                     {packageGenerated ? (
                                         <>
@@ -728,7 +651,7 @@ export default function EvidencePage() {
 
                                 <button
                                     type="button"
-                                    className="flex min-w-[190px] items-center justify-center gap-3 border border-[#322D29]/15 bg-[#EFE9E1] px-6 py-4 text-[8px] font-bold tracking-[0.14em] text-[#322D29]/55 transition hover:border-[#72383D]/25 hover:text-[#72383D]"
+                                    className="flex min-w-[190px] items-center justify-center gap-3 border border-[#322D29]/15 bg-[#EFE9E1] px-6 py-4 text-[9px] font-bold tracking-[0.14em] text-[#322D29]/55 transition hover:border-[#72383D]/25 hover:text-[#72383D]"
                                 >
                                     <Download className="h-3.5 w-3.5" />
                                     EXPORT EVIDENCE
@@ -764,7 +687,7 @@ export default function EvidencePage() {
             ============================================================ */}
 
             <footer className="bg-[#292522] text-[#EFE9E1]">
-                <div className="mx-auto flex max-w-[1600px] flex-col gap-5 px-6 py-9 text-[8px] font-semibold tracking-[0.17em] text-[#EFE9E1]/35 sm:flex-row sm:items-center sm:justify-between lg:px-10">
+                <div className="mx-auto flex max-w-[1600px] flex-col gap-5 px-6 py-9 text-[9px] font-semibold tracking-[0.17em] text-[#EFE9E1]/35 sm:flex-row sm:items-center sm:justify-between lg:px-10">
                     <span>
                         CRYPTOGRAPH / EVIDENCE WORKSPACE
                     </span>
@@ -788,12 +711,12 @@ export default function EvidencePage() {
                     <div className="max-h-[90vh] w-full max-w-[720px] overflow-auto border border-[#322D29]/15 bg-[#EFE9E1] shadow-[0_30px_100px_rgba(30,25,22,0.30)]">
                         <div className="flex items-center justify-between border-b border-[#322D29]/10 px-6 py-5">
                             <div className="flex items-center gap-3">
-                                <span className="font-mono text-[8px] font-bold text-[#72383D]">
+                                <span className="font-mono text-[9px] font-bold text-[#72383D]">
                                     EVIDENCE /{" "}
                                     {selectedEvidence.id}
                                 </span>
 
-                                <span className="rounded-full border border-[#72383D]/20 bg-[#72383D]/5 px-2 py-1 font-mono text-[6px] font-bold tracking-[0.1em] text-[#72383D]">
+                                <span className="rounded-full border border-[#72383D]/20 bg-[#72383D]/5 px-2 py-1 font-mono text-[9px] font-bold tracking-[0.1em] text-[#72383D]">
                                     {
                                         selectedEvidence.status
                                     }
@@ -814,7 +737,7 @@ export default function EvidencePage() {
                         <div className="p-6">
                             <div className="flex items-start justify-between gap-5">
                                 <div>
-                                    <p className="font-mono text-[8px] tracking-[0.14em] text-[#322D29]/35">
+                                    <p className="font-mono text-[9px] tracking-[0.14em] text-[#322D29]/35">
                                         {
                                             selectedEvidence.timestamp
                                         }
@@ -881,12 +804,12 @@ export default function EvidencePage() {
                             </div>
 
                             <div className="mt-3 border border-[#322D29]/10 bg-[#D9D9D9]/25 p-4">
-                                <p className="font-mono text-[6px] font-bold tracking-[0.14em] text-[#322D29]/30">
+                                <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-[#322D29]/30">
                                     TRANSACTION HASH
                                 </p>
 
                                 <div className="mt-3 flex items-center justify-between gap-4">
-                                    <p className="font-mono text-[10px]">
+                                    <p className="font-mono text-[12px]">
                                         {
                                             selectedEvidence.hash
                                         }
@@ -899,7 +822,7 @@ export default function EvidencePage() {
                                                 selectedEvidence.hash,
                                             )
                                         }
-                                        className="flex items-center gap-2 text-[7px] font-bold tracking-[0.1em] text-[#72383D]"
+                                        className="flex items-center gap-2 text-[9px] font-bold tracking-[0.1em] text-[#72383D]"
                                     >
                                         {copied ===
                                             selectedEvidence.hash ? (
@@ -917,7 +840,7 @@ export default function EvidencePage() {
                             </div>
 
                             <div className="mt-3 border border-[#322D29]/10 p-5">
-                                <p className="font-mono text-[6px] font-bold tracking-[0.14em] text-[#322D29]/30">
+                                <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-[#322D29]/30">
                                     EVIDENCE RELEVANCE
                                 </p>
 
@@ -929,14 +852,14 @@ export default function EvidencePage() {
                             </div>
 
                             <div className="mt-6 flex flex-wrap items-center justify-between gap-4">
-                                <span className="flex items-center gap-2 font-mono text-[7px] tracking-[0.1em] text-[#322D29]/35">
+                                <span className="flex items-center gap-2 font-mono text-[9px] tracking-[0.1em] text-[#322D29]/35">
                                     <ShieldCheck className="h-3.5 w-3.5 text-[#72383D]" />
                                     SOURCE VERIFIED
                                 </span>
 
                                 <button
                                     type="button"
-                                    className="flex items-center gap-2 border border-[#322D29]/10 px-4 py-3 text-[7px] font-bold tracking-[0.12em] text-[#322D29]/45 transition hover:border-[#72383D]/25 hover:text-[#72383D]"
+                                    className="flex items-center gap-2 border border-[#322D29]/10 px-4 py-3 text-[9px] font-bold tracking-[0.12em] text-[#322D29]/45 transition hover:border-[#72383D]/25 hover:text-[#72383D]"
                                 >
                                     VIEW ON EXPLORER
                                     <ExternalLink className="h-3 w-3" />
@@ -978,11 +901,11 @@ function CaseStat({
 }) {
     return (
         <div>
-            <p className="font-mono text-[7px] font-bold tracking-[0.15em] text-[#322D29]/30">
+            <p className="font-mono text-[9px] font-bold tracking-[0.15em] text-[#322D29]/30">
                 {label}
             </p>
 
-            <p className="mt-2 font-mono text-[10px] font-bold tracking-[0.05em]">
+            <p className="mt-2 font-mono text-[12px] font-bold tracking-[0.05em]">
                 {value}
             </p>
         </div>
@@ -1008,7 +931,7 @@ function SummaryCell({
 }) {
     return (
         <div className="border-b border-[#322D29]/10 p-6 last:border-b-0 md:[&:nth-child(odd)]:border-r">
-            <p className="font-mono text-[7px] font-bold tracking-[0.14em] text-[#322D29]/30">
+            <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-[#322D29]/30">
                 {label}
             </p>
 
@@ -1052,21 +975,21 @@ function EvidenceRow({
             onClick={onOpen}
             className="group grid w-full gap-5 border-b border-[#322D29]/10 py-7 text-left transition hover:bg-[#EFE9E1]/60 sm:grid-cols-[55px_150px_1fr_120px] sm:items-center"
         >
-            <span className="font-mono text-[8px] text-[#72383D]">
+            <span className="font-mono text-[9px] text-[#72383D]">
                 {item.number}
             </span>
 
             <div>
-                <p className="text-[8px] font-bold tracking-[0.12em]">
+                <p className="text-[9px] font-bold tracking-[0.12em]">
                     {item.title}
                 </p>
 
-                <p className="mt-2 font-mono text-[7px] text-[#322D29]/30">
+                <p className="mt-2 font-mono text-[9px] text-[#322D29]/30">
                     {item.timestamp}
                 </p>
             </div>
 
-            <div className="font-mono text-[8px] leading-6">
+            <div className="font-mono text-[9px] leading-6">
                 <p className="text-[#322D29]/55">
                     {item.from}
                 </p>
@@ -1080,11 +1003,11 @@ function EvidenceRow({
 
             <div className="flex items-center justify-between gap-4 sm:justify-end">
                 <div className="text-right">
-                    <p className="font-mono text-[10px] font-bold">
+                    <p className="font-mono text-[12px] font-bold">
                         {item.amount}
                     </p>
 
-                    <p className="mt-2 text-[6px] font-bold tracking-[0.12em] text-[#72383D]">
+                    <p className="mt-2 text-[9px] font-bold tracking-[0.12em] text-[#72383D]">
                         {item.status}
                     </p>
                 </div>
@@ -1146,7 +1069,7 @@ function RelationshipStep({
                 <div>
                     <div className="flex flex-wrap items-center gap-3">
                         <span
-                            className={`text-[9px] font-bold tracking-[0.14em] ${flagged
+                            className={`text-[11px] font-bold tracking-[0.14em] ${flagged
                                     ? "text-[#AC9C8D]"
                                     : "text-[#EFE9E1]/70"
                                 }`}
@@ -1154,7 +1077,7 @@ function RelationshipStep({
                             {label}
                         </span>
 
-                        <span className="font-mono text-[6px] text-[#EFE9E1]/25">
+                        <span className="font-mono text-[9px] text-[#EFE9E1]/25">
                             {number}
                         </span>
                     </div>
@@ -1163,7 +1086,7 @@ function RelationshipStep({
                         {address}
                     </p>
 
-                    <p className="mt-1 text-[7px] tracking-[0.1em] text-[#EFE9E1]/25">
+                    <p className="mt-1 text-[9px] tracking-[0.1em] text-[#EFE9E1]/25">
                         {detail}
                     </p>
                 </div>
@@ -1202,13 +1125,13 @@ function BehaviourCard({
                     </span>
                 </span>
 
-                <span className="font-mono text-[7px] text-[#72383D]">
+                <span className="font-mono text-[9px] text-[#72383D]">
                     {number}
                 </span>
             </div>
 
             <div className="mt-7 flex items-end justify-between gap-4">
-                <p className="max-w-[170px] text-[9px] font-bold leading-4 tracking-[0.12em]">
+                <p className="max-w-[170px] text-[11px] font-bold leading-4 tracking-[0.12em]">
                     {title}
                 </p>
 
@@ -1217,7 +1140,7 @@ function BehaviourCard({
                 </p>
             </div>
 
-            <p className="mt-4 text-[9px] leading-5 text-[#322D29]/40">
+            <p className="mt-4 text-[11px] leading-5 text-[#322D29]/40">
                 {description}
             </p>
         </div>
@@ -1237,11 +1160,11 @@ function NoteFact({
 }) {
     return (
         <div className="border border-[#322D29]/10 bg-[#EFE9E1]/60 p-4">
-            <p className="font-mono text-[6px] font-bold tracking-[0.13em] text-[#322D29]/30">
+            <p className="font-mono text-[9px] font-bold tracking-[0.13em] text-[#322D29]/30">
                 {label}
             </p>
 
-            <p className="mt-2 font-mono text-[10px] font-bold">
+            <p className="mt-2 font-mono text-[12px] font-bold">
                 {value}
             </p>
         </div>
@@ -1270,11 +1193,11 @@ function PackageItem({
             </span>
 
             <div>
-                <p className="font-mono text-[7px] font-bold tracking-[0.13em] text-[#322D29]/30">
+                <p className="font-mono text-[9px] font-bold tracking-[0.13em] text-[#322D29]/30">
                     {label}
                 </p>
 
-                <p className="mt-1 font-mono text-[8px] font-bold">
+                <p className="mt-1 font-mono text-[9px] font-bold">
                     {value}
                 </p>
             </div>
@@ -1299,12 +1222,12 @@ function DetailBox({
 }) {
     return (
         <div className="border border-[#322D29]/10 bg-[#D9D9D9]/25 p-4">
-            <p className="font-mono text-[6px] font-bold tracking-[0.13em] text-[#322D29]/30">
+            <p className="font-mono text-[9px] font-bold tracking-[0.13em] text-[#322D29]/30">
                 {label}
             </p>
 
             <div className="mt-3 flex items-center justify-between gap-3">
-                <p className="font-mono text-[9px]">
+                <p className="font-mono text-[11px]">
                     {value}
                 </p>
 

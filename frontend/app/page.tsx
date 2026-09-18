@@ -1,5 +1,5 @@
 "use client";
-
+import SiteHeader from "./components/SiteHeader";
 import { useState } from "react";
 import {
   ArrowDownRight,
@@ -83,86 +83,8 @@ export default function Home() {
       {/* ============================================================
           NAVIGATION
       ============================================================ */}
-
-      <header className="fixed left-1/2 top-5 z-50 w-[calc(100%-32px)] max-w-[1420px] -translate-x-1/2">
-        <div className="relative flex h-[68px] items-center justify-between rounded-[20px] border border-[#EFE9E1]/10 bg-[#292522]/95 px-4 text-[#EFE9E1] shadow-[0_14px_45px_rgba(30,25,22,0.20)] backdrop-blur-md sm:px-5 lg:px-6">
-
-          {/* BRAND */}
-          <a
-            href="/intake"
-            className="group flex shrink-0 items-center gap-3"
-          >
-            <div className="relative flex h-9 w-9 items-center justify-center rounded-[10px] border border-[#EFE9E1]/25 bg-[#322D29] transition-all duration-300 group-hover:border-[#72383D] group-hover:bg-[#72383D]">
-              <span className="font-mono text-[9px] font-bold tracking-[-0.05em] text-[#EFE9E1]">
-                CG
-              </span>
-
-              <span className="absolute -right-1 -top-1 h-2 w-2 rounded-full bg-[#72383D]" />
-            </div>
-
-            <div className="hidden leading-none sm:block">
-              <p className="text-[11px] font-bold tracking-[0.14em]">
-                CRYPTOGRAPH
-              </p>
-
-              <p className="mt-1 font-mono text-[6px] tracking-[0.22em] text-[#EFE9E1]/35">
-                FINANCIAL INVESTIGATION
-              </p>
-            </div>
-          </a>
-
-          {/* NAVIGATION */}
-          <nav className="absolute left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-[#EFE9E1]/10 bg-[#1F1C1A]/70 p-1 md:flex">
-            <NavItem
-              href="#investigate"
-              label="Investigate"
-              active
-            />
-
-            <NavItem
-              href="#method"
-              label="The Trail"
-            />
-
-            <NavItem
-              href="#evidence"
-              label="Evidence"
-            />
-          </nav>
-
-          {/* RIGHT SIDE */}
-          <div className="flex items-center gap-2">
-
-            {/* Network status */}
-            <div className="hidden items-center gap-2 rounded-full border border-[#EFE9E1]/10 px-3 py-2 sm:flex">
-              <span className="relative flex h-2 w-2">
-                <span className="absolute inline-flex h-full w-full animate-ping rounded-full bg-[#72383D]/50" />
-                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#72383D]" />
-              </span>
-
-              <span className="font-mono text-[7px] font-medium tracking-[0.14em] text-[#EFE9E1]/55">
-                ETH / LIVE
-              </span>
-            </div>
-
-            {/* CTA */}
-            <a
-              href="#investigate"
-              className="group flex h-10 items-center gap-2 rounded-[11px] bg-[#EFE9E1] px-4 text-[8px] font-bold tracking-[0.12em] text-[#322D29] transition-all duration-300 hover:bg-[#72383D] hover:text-[#EFE9E1] hover:shadow-[0_6px_20px_rgba(114,56,61,0.35)]"
-            >
-              <span className="hidden sm:inline">
-                NEW INVESTIGATION
-              </span>
-
-              <span className="sm:hidden">
-                NEW CASE
-              </span>
-
-              <ArrowRight className="h-3 w-3 transition-transform duration-300 group-hover:translate-x-1" />
-            </a>
-          </div>
-        </div>
-      </header>
+      <SiteHeader activePage="home" />
+      
 
       {/* ============================================================
           HERO / INVESTIGATION
@@ -183,7 +105,7 @@ export default function Home() {
 
           <div className="flex flex-col justify-center px-0 py-24 lg:pl-14 lg:pr-20">
             <div className="mb-8 flex items-center gap-3">
-              <span className="font-mono text-[9px] text-[#72383D]">
+              <span className="font-mono text-[11px] text-[#72383D]">
                 CASEWORK / 001
               </span>
 
@@ -202,7 +124,7 @@ export default function Home() {
             </h1>
 
             <div className="mt-10 grid max-w-[650px] grid-cols-[90px_1fr] gap-5">
-              <span className="pt-1 font-mono text-[8px] tracking-[0.15em] text-[#322D29]/35">
+              <span className="pt-1 font-mono text-[9px] tracking-[0.15em] text-[#322D29]/35">
                 PURPOSE
               </span>
 
@@ -217,7 +139,7 @@ export default function Home() {
             <div className="mt-14">
               <a
                 href="/intake"
-                className="group inline-flex h-[58px] items-center gap-5 bg-[#322D29] px-7 text-[9px] font-bold tracking-[0.18em] text-[#EFE9E1] transition-all duration-300 hover:bg-[#72383D] hover:shadow-[0_12px_30px_rgba(114,56,61,0.22)]"
+                className="group inline-flex h-[58px] items-center gap-5 bg-[#322D29] px-7 text-[11px] font-bold tracking-[0.18em] text-[#EFE9E1] transition-all duration-300 hover:bg-[#72383D] hover:shadow-[0_12px_30px_rgba(114,56,61,0.22)]"
               >
                 BEGIN INVESTIGATION
 
@@ -226,7 +148,7 @@ export default function Home() {
                 </span>
               </a>
 
-              <p className="mt-4 font-mono text-[7px] tracking-[0.14em] text-[#322D29]/30">
+              <p className="mt-4 font-mono text-[9px] tracking-[0.14em] text-[#322D29]/30">
                 START WITH A SUBJECT WALLET ADDRESS
               </p>
             </div>
@@ -250,17 +172,17 @@ export default function Home() {
 
             {/* top metadata */}
             <div className="pointer-events-none absolute left-8 top-9 z-10">
-              <p className="font-mono text-[8px] tracking-[0.14em] text-[#322D29]/30">
+              <p className="font-mono text-[9px] tracking-[0.14em] text-[#322D29]/30">
                 LIVE NETWORK MAP
               </p>
 
-              <p className="mt-2 font-mono text-[7px] tracking-[0.12em] text-[#322D29]/20">
+              <p className="mt-2 font-mono text-[9px] tracking-[0.12em] text-[#322D29]/20">
                 RELATIONSHIP VIEW / 2 HOPS
               </p>
             </div>
 
             <div className="pointer-events-none absolute right-8 top-9 z-10">
-              <p className="font-mono text-[8px] text-[#322D29]/30">
+              <p className="font-mono text-[9px] text-[#322D29]/30">
                 FIG. 01
               </p>
             </div>
@@ -419,7 +341,7 @@ export default function Home() {
                         }`}
                     />
 
-                    <span className="font-mono text-[8px] font-bold tracking-[0.15em]">
+                    <span className="font-mono text-[9px] font-bold tracking-[0.15em]">
                       NODE INSPECTION
                     </span>
                   </div>
@@ -437,22 +359,22 @@ export default function Home() {
                 {/* panel content */}
                 <div className="grid grid-cols-3 gap-4 px-4 py-4">
                   <div>
-                    <p className="font-mono text-[7px] tracking-[0.14em] text-[#322D29]/30">
+                    <p className="font-mono text-[9px] tracking-[0.14em] text-[#322D29]/30">
                       ADDRESS
                     </p>
 
-                    <p className="mt-2 font-mono text-[9px]">
+                    <p className="mt-2 font-mono text-[11px]">
                       {selectedNode.address}
                     </p>
                   </div>
 
                   <div>
-                    <p className="font-mono text-[7px] tracking-[0.14em] text-[#322D29]/30">
+                    <p className="font-mono text-[9px] tracking-[0.14em] text-[#322D29]/30">
                       RELATIONSHIP
                     </p>
 
                     <p
-                      className={`mt-2 text-[8px] font-bold tracking-[0.08em] ${selectedNode.suspicious
+                      className={`mt-2 text-[9px] font-bold tracking-[0.08em] ${selectedNode.suspicious
                         ? "text-[#72383D]"
                         : ""
                         }`}
@@ -462,11 +384,11 @@ export default function Home() {
                   </div>
 
                   <div>
-                    <p className="font-mono text-[7px] tracking-[0.14em] text-[#322D29]/30">
+                    <p className="font-mono text-[9px] tracking-[0.14em] text-[#322D29]/30">
                       TRANSACTIONS
                     </p>
 
-                    <p className="mt-2 font-mono text-[9px]">
+                    <p className="mt-2 font-mono text-[11px]">
                       {selectedNode.transactions}
                     </p>
                   </div>
@@ -474,11 +396,11 @@ export default function Home() {
 
                 {/* panel footer */}
                 <div className="flex items-center justify-between border-t border-[#322D29]/10 px-4 py-3">
-                  <span className="font-mono text-[7px] tracking-[0.13em] text-[#322D29]/35">
+                  <span className="font-mono text-[9px] tracking-[0.13em] text-[#322D29]/35">
                     {selectedNode.label || "OBSERVED NODE"}
                   </span>
 
-                  <span className="flex items-center gap-2 text-[7px] font-bold tracking-[0.14em]">
+                  <span className="flex items-center gap-2 text-[9px] font-bold tracking-[0.14em]">
                     TRACE NODE
                     <ArrowRight className="h-3 w-3 text-[#72383D]" />
                   </span>
@@ -491,11 +413,11 @@ export default function Home() {
               <div className="pointer-events-none absolute bottom-10 left-8 right-8 border-t border-[#322D29]/15 pt-4">
                 <div className="flex items-start justify-between">
                   <div>
-                    <p className="text-[9px] font-bold tracking-[0.16em]">
+                    <p className="text-[11px] font-bold tracking-[0.16em]">
                       OBSERVED RELATIONSHIP
                     </p>
 
-                    <p className="mt-1 max-w-[250px] text-[9px] leading-5 text-[#322D29]/40">
+                    <p className="mt-1 max-w-[250px] text-[11px] leading-5 text-[#322D29]/40">
                       Click any wallet node to inspect its observable
                       relationship with the investigated address.
                     </p>
@@ -522,7 +444,7 @@ export default function Home() {
 
             {/* Section title */}
             <div className="border-r border-[#322D29]/15 py-20 pr-10">
-              <p className="font-mono text-[9px] text-[#72383D]">
+              <p className="font-mono text-[11px] text-[#72383D]">
                 02 / METHOD
               </p>
 
@@ -619,7 +541,7 @@ export default function Home() {
                   <span className="relative h-2.5 w-2.5 rounded-full bg-[#72383D]" />
                 </span>
 
-                <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-[#EFE9E1]">
+                <span className="font-mono text-[11px] font-bold tracking-[0.16em] text-[#EFE9E1]">
                   TRACE ACTIVE
                 </span>
               </div>
@@ -637,7 +559,7 @@ export default function Home() {
             {/* left information */}
             <div className="relative">
               <div className="sticky top-32">
-                <p className="font-mono text-[9px] font-bold tracking-[0.18em] text-[#EFE9E1]/30">
+                <p className="font-mono text-[11px] font-bold tracking-[0.18em] text-[#EFE9E1]/30">
                   INVESTIGATION PATH
                 </p>
 
@@ -655,7 +577,7 @@ export default function Home() {
 
                 <div className="mt-10 border-t border-[#EFE9E1]/15 pt-5">
                   <div className="flex items-center justify-between">
-                    <span className="font-mono text-[9px] tracking-[0.15em] text-[#EFE9E1]/35">
+                    <span className="font-mono text-[11px] tracking-[0.15em] text-[#EFE9E1]/35">
                       TOTAL OBSERVED
                     </span>
 
@@ -665,11 +587,11 @@ export default function Home() {
                   </div>
 
                   <div className="mt-4 flex items-center justify-between">
-                    <span className="font-mono text-[9px] tracking-[0.15em] text-[#EFE9E1]/35">
+                    <span className="font-mono text-[11px] tracking-[0.15em] text-[#EFE9E1]/35">
                       TIME SPAN
                     </span>
 
-                    <span className="font-mono text-[10px]">
+                    <span className="font-mono text-[12px]">
                       26 MIN 41 SEC
                     </span>
                   </div>
@@ -716,7 +638,7 @@ export default function Home() {
                 </div>
 
                 <div>
-                  <p className="font-mono text-[9px] font-bold tracking-[0.16em] text-[#AC9C8D]">
+                  <p className="font-mono text-[11px] font-bold tracking-[0.16em] text-[#AC9C8D]">
                     CURRENT TRACE END
                   </p>
 
@@ -742,7 +664,7 @@ export default function Home() {
           <div className="grid gap-16 lg:grid-cols-[0.7fr_1.3fr]">
 
             <div>
-              <p className="font-mono text-[9px] text-[#72383D]">
+              <p className="font-mono text-[11px] text-[#72383D]">
                 04 / EVIDENCE
               </p>
 
@@ -785,7 +707,7 @@ export default function Home() {
       ============================================================ */}
 
       <footer className="bg-[#292522] text-[#EFE9E1]">
-        <div className="mx-auto flex max-w-[1600px] flex-col gap-5 px-6 py-9 text-[9px] font-semibold tracking-[0.17em] text-[#EFE9E1]/45 sm:flex-row sm:items-center sm:justify-between lg:px-10">
+        <div className="mx-auto flex max-w-[1600px] flex-col gap-5 px-6 py-9 text-[11px] font-semibold tracking-[0.17em] text-[#EFE9E1]/45 sm:flex-row sm:items-center sm:justify-between lg:px-10">
           <span>CRYPTOGRAPH / FINANCIAL INVESTIGATION</span>
 
           <span className="text-[#72383D]">ETHEREUM</span>
@@ -813,7 +735,7 @@ function NavItem({
   return (
     <a
       href={href}
-      className={`relative rounded-full px-4 py-2.5 text-[8px] font-bold tracking-[0.12em] transition-all duration-300 ${active
+      className={`relative rounded-full px-4 py-2.5 text-[9px] font-bold tracking-[0.12em] transition-all duration-300 ${active
         ? "bg-[#EFE9E1] text-[#72383D] shadow-sm"
         : "text-[#EFE9E1]/45 hover:bg-[#EFE9E1]/10 hover:text-[#EFE9E1]"
         }`}
@@ -840,11 +762,11 @@ function Meta({
 }) {
   return (
     <div>
-      <p className="text-[8px] font-bold tracking-[0.16em] text-[#322D29]/30">
+      <p className="text-[9px] font-bold tracking-[0.16em] text-[#322D29]/30">
         {label}
       </p>
 
-      <p className="mt-1 font-mono text-[9px]">{value}</p>
+      <p className="mt-1 font-mono text-[11px]">{value}</p>
     </div>
   );
 }
@@ -927,7 +849,7 @@ function GraphNode({
 
       {label && (
         <p
-          className={`absolute top-full mt-3 whitespace-nowrap text-[8px] font-bold tracking-[0.14em] transition-colors ${suspicious || selected
+          className={`absolute top-full mt-3 whitespace-nowrap text-[9px] font-bold tracking-[0.14em] transition-colors ${suspicious || selected
             ? "text-[#72383D]"
             : "text-[#322D29]/45"
             }`}
@@ -936,7 +858,7 @@ function GraphNode({
         </p>
       )}
 
-      <p className="absolute left-1/2 top-full mt-7 -translate-x-1/2 whitespace-nowrap font-mono text-[7px] text-[#322D29]/30">
+      <p className="absolute left-1/2 top-full mt-7 -translate-x-1/2 whitespace-nowrap font-mono text-[9px] text-[#322D29]/30">
         {address}
       </p>
     </button>
@@ -961,7 +883,7 @@ function Method({
   return (
     <div className="group border-b border-[#322D29]/15 p-7 transition-colors hover:bg-[#EFE9E1] lg:border-b-0 lg:border-r last:border-r-0">
       <div className="flex items-start justify-between">
-        <span className="font-mono text-[8px] text-[#72383D]">
+        <span className="font-mono text-[9px] text-[#72383D]">
           {number}
         </span>
 
@@ -1036,18 +958,18 @@ function Trail({
             }`}
         >
           <div className="flex items-center gap-3">
-            <span className="font-mono text-[9px] font-bold tracking-[0.16em] text-[#AC9C8D]">
+            <span className="font-mono text-[11px] font-bold tracking-[0.16em] text-[#AC9C8D]">
               STEP {step}
             </span>
 
             <span className="h-px w-8 bg-[#72383D]/50" />
 
-            <span className="font-mono text-[9px] tracking-[0.13em] text-[#EFE9E1]/35">
+            <span className="font-mono text-[11px] tracking-[0.13em] text-[#EFE9E1]/35">
               {note}
             </span>
           </div>
 
-          <span className="font-mono text-[9px] text-[#EFE9E1]/30">
+          <span className="font-mono text-[11px] text-[#EFE9E1]/30">
             {time} UTC
           </span>
         </div>
@@ -1057,7 +979,7 @@ function Trail({
 
           {/* sender */}
           <div>
-            <p className="font-mono text-[8px] font-bold tracking-[0.15em] text-[#EFE9E1]/30">
+            <p className="font-mono text-[9px] font-bold tracking-[0.15em] text-[#EFE9E1]/30">
               FROM
             </p>
 
@@ -1065,7 +987,7 @@ function Trail({
               {from}
             </p>
 
-            <p className="mt-2 text-[9px] text-[#EFE9E1]/30">
+            <p className="mt-2 text-[11px] text-[#EFE9E1]/30">
               SOURCE WALLET
             </p>
           </div>
@@ -1088,14 +1010,14 @@ function Trail({
               <div className="h-px w-10 bg-[#72383D]/45" />
             </div>
 
-            <p className="mt-2 font-mono text-[7px] tracking-[0.14em] text-[#EFE9E1]/25">
+            <p className="mt-2 font-mono text-[9px] tracking-[0.14em] text-[#EFE9E1]/25">
               VALUE TRANSFER
             </p>
           </div>
 
           {/* receiver */}
           <div className="md:text-right">
-            <p className="font-mono text-[8px] font-bold tracking-[0.15em] text-[#EFE9E1]/30">
+            <p className="font-mono text-[9px] font-bold tracking-[0.15em] text-[#EFE9E1]/30">
               TO
             </p>
 
@@ -1103,7 +1025,7 @@ function Trail({
               {to}
             </p>
 
-            <p className="mt-2 text-[9px] text-[#EFE9E1]/30">
+            <p className="mt-2 text-[11px] text-[#EFE9E1]/30">
               DESTINATION WALLET
             </p>
           </div>
@@ -1118,17 +1040,17 @@ function Trail({
                 }`}
             />
 
-            <span className="font-mono text-[8px] tracking-[0.12em] text-[#EFE9E1]/35">
+            <span className="font-mono text-[9px] tracking-[0.12em] text-[#EFE9E1]/35">
               OBSERVED ON CHAIN
             </span>
           </div>
 
           <div className="flex items-center gap-5">
-            <span className="font-mono text-[8px] text-[#EFE9E1]/25">
+            <span className="font-mono text-[9px] text-[#EFE9E1]/25">
               ETHEREUM
             </span>
 
-            <span className="font-mono text-[8px] text-[#EFE9E1]/25">
+            <span className="font-mono text-[9px] text-[#EFE9E1]/25">
               CONFIRMED
             </span>
           </div>
@@ -1158,21 +1080,21 @@ function EvidenceRow({
 }) {
   return (
     <div className="grid gap-5 border-b border-[#322D29]/15 py-7 sm:grid-cols-[50px_1fr_auto] sm:items-center">
-      <span className="font-mono text-[8px] text-[#72383D]">
+      <span className="font-mono text-[9px] text-[#72383D]">
         {number}
       </span>
 
       <div>
-        <p className="text-[10px] font-bold tracking-[0.12em]">
+        <p className="text-[12px] font-bold tracking-[0.12em]">
           {title}
         </p>
 
-        <p className="mt-2 text-[10px] text-[#322D29]/35">
+        <p className="mt-2 text-[12px] text-[#322D29]/35">
           Blockchain transaction analysis
         </p>
       </div>
 
-      <span className="font-mono text-[9px] text-[#72383D]">
+      <span className="font-mono text-[11px] text-[#72383D]">
         {detail}
       </span>
     </div>

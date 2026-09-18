@@ -1,5 +1,5 @@
 "use client";
-
+import SiteHeader from "../components/SiteHeader";
 import { FormEvent, useState } from "react";
 import {
     ArrowLeft,
@@ -124,85 +124,8 @@ export default function IntakePage() {
             {/* ============================================================
                 NAVIGATION
             ============================================================ */}
-
-            <header className="fixed left-1/2 top-4 z-50 w-[calc(100%-32px)] max-w-[1480px] -translate-x-1/2">
-                <div className="flex h-[70px] items-center justify-between rounded-[20px] border border-[#EFE9E1]/10 bg-[#292522]/95 px-5 text-[#EFE9E1] shadow-[0_16px_50px_rgba(30,25,22,0.24)] backdrop-blur-xl lg:px-7">
-                    <a
-                        href="/"
-                        className="group flex items-center gap-3"
-                    >
-                        <div className="relative flex h-10 w-10 items-center justify-center rounded-[11px] border border-[#EFE9E1]/20 bg-[#322D29] transition-all duration-300 group-hover:border-[#72383D] group-hover:bg-[#72383D]">
-                            <span className="font-mono text-[10px] font-bold tracking-[-0.05em]">
-                                CG
-                            </span>
-
-                            <span className="absolute -right-1 -top-1 h-2.5 w-2.5 rounded-full bg-[#72383D]" />
-                        </div>
-
-                        <div className="hidden leading-none sm:block">
-                            <p className="text-[12px] font-bold tracking-[0.14em]">
-                                CRYPTOGRAPH
-                            </p>
-
-                            <p className="mt-1 font-mono text-[7px] tracking-[0.22em] text-[#EFE9E1]/35">
-                                FINANCIAL INVESTIGATION
-                            </p>
-                        </div>
-                    </a>
-
-                    <nav className="hidden items-center gap-1 rounded-full border border-[#EFE9E1]/10 bg-[#1F1C1A]/75 p-1 md:flex">
-                        <a
-                            href="/"
-                            className="rounded-full px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#EFE9E1]/45 transition hover:bg-[#EFE9E1]/10 hover:text-[#EFE9E1]"
-                        >
-                            HOME
-                        </a>
-
-                        <a
-                            href="/intake"
-                            className="rounded-full bg-[#EFE9E1] px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#72383D] shadow-sm"
-                        >
-                            INVESTIGATE
-                        </a>
-
-                        <a
-                            href="/#method"
-                            className="rounded-full px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#EFE9E1]/45 transition hover:bg-[#EFE9E1]/10 hover:text-[#EFE9E1]"
-                        >
-                            THE TRAIL
-                        </a>
-
-                        <a
-                            href="/#evidence"
-                            className="rounded-full px-5 py-3 text-[9px] font-bold tracking-[0.12em] text-[#EFE9E1]/45 transition hover:bg-[#EFE9E1]/10 hover:text-[#EFE9E1]"
-                        >
-                            EVIDENCE
-                        </a>
-                    </nav>
-
-                    <div className="flex items-center gap-3">
-                        <div className="hidden items-center gap-2 rounded-full border border-[#EFE9E1]/10 px-4 py-2.5 sm:flex">
-                            <span className="relative flex h-2 w-2">
-                                <span className="absolute inline-flex h-full w-full rounded-full bg-[#72383D]/40" />
-                                <span className="relative inline-flex h-2 w-2 rounded-full bg-[#72383D]" />
-                            </span>
-
-                            <span className="font-mono text-[8px] tracking-[0.14em] text-[#EFE9E1]/55">
-                                ETH / LIVE
-                            </span>
-                        </div>
-
-                        <a
-                            href="/"
-                            className="flex h-10 items-center gap-2 rounded-[11px] bg-[#EFE9E1] px-4 text-[8px] font-bold tracking-[0.12em] text-[#322D29] transition hover:bg-[#72383D] hover:text-[#EFE9E1]"
-                        >
-                            <ArrowLeft className="h-3 w-3" />
-                            HOME
-                        </a>
-                    </div>
-                </div>
-            </header>
-
+            
+            <SiteHeader activePage="intake" />
             {/* ============================================================
                 PAGE HEADER
             ============================================================ */}
@@ -214,7 +137,7 @@ export default function IntakePage() {
                             <div className="mb-5 flex items-center gap-3">
                                 <a
                                     href="/"
-                                    className="flex items-center gap-2 font-mono text-[9px] tracking-[0.14em] text-[#322D29]/35 transition hover:text-[#72383D]"
+                                    className="flex items-center gap-2 font-mono text-[11px] tracking-[0.14em] text-[#322D29]/35 transition hover:text-[#72383D]"
                                 >
                                     <ArrowLeft className="h-3 w-3" />
                                     BACK TO OVERVIEW
@@ -224,11 +147,11 @@ export default function IntakePage() {
                             </div>
 
                             <div className="flex items-center gap-3">
-                                <p className="font-mono text-[10px] font-bold tracking-[0.15em] text-[#72383D]">
+                                <p className="font-mono text-[12px] font-bold tracking-[0.15em] text-[#72383D]">
                                     01 / CASE INTAKE
                                 </p>
 
-                                <span className="rounded-full border border-[#322D29]/10 bg-[#D9D9D9]/40 px-3 py-1.5 font-mono text-[7px] font-bold tracking-[0.12em] text-[#322D29]/40">
+                                <span className="rounded-full border border-[#322D29]/10 bg-[#D9D9D9]/40 px-3 py-1.5 font-mono text-[9px] font-bold tracking-[0.12em] text-[#322D29]/40">
                                     PRE-ANALYSIS
                                 </span>
                             </div>
@@ -254,11 +177,11 @@ export default function IntakePage() {
                             </div>
 
                             <div>
-                                <p className="font-mono text-[7px] font-bold tracking-[0.14em] text-[#322D29]/35">
+                                <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-[#322D29]/35">
                                     ANALYSIS ENVIRONMENT
                                 </p>
 
-                                <p className="mt-1 text-[9px] font-bold tracking-[0.08em]">
+                                <p className="mt-1 text-[11px] font-bold tracking-[0.08em]">
                                     BLOCKCHAIN INTELLIGENCE
                                 </p>
                             </div>
@@ -286,11 +209,11 @@ export default function IntakePage() {
                         <section className="border border-[#322D29]/15 bg-[#D9D9D9]/30">
                             <div className="flex items-center justify-between border-b border-[#322D29]/10 px-6 py-5">
                                 <div>
-                                    <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                    <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                         CASE DETAILS
                                     </p>
 
-                                    <p className="mt-1 text-[9px] text-[#322D29]/35">
+                                    <p className="mt-1 text-[11px] text-[#322D29]/35">
                                         Identify the investigation.
                                     </p>
                                 </div>
@@ -300,12 +223,12 @@ export default function IntakePage() {
 
                             <div className="grid gap-6 p-6 md:grid-cols-[1fr_220px]">
                                 <div>
-                                    <label className="font-mono text-[8px] font-bold tracking-[0.14em] text-[#322D29]/45">
+                                    <label className="font-mono text-[9px] font-bold tracking-[0.14em] text-[#322D29]/45">
                                         CASE ID
                                     </label>
 
                                     <div className="mt-3 flex items-center border-b border-[#322D29]/20 pb-3 focus-within:border-[#72383D]">
-                                        <span className="mr-2 font-mono text-[10px] text-[#322D29]/30">
+                                        <span className="mr-2 font-mono text-[12px] text-[#322D29]/30">
                                             CASE /
                                         </span>
 
@@ -328,14 +251,14 @@ export default function IntakePage() {
                                 </div>
 
                                 <div className="border border-[#322D29]/10 bg-[#EFE9E1]/45 p-4">
-                                    <p className="font-mono text-[6px] font-bold tracking-[0.14em] text-[#322D29]/30">
+                                    <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-[#322D29]/30">
                                         SESSION TYPE
                                     </p>
 
                                     <div className="mt-3 flex items-center gap-2">
                                         <span className="h-2 w-2 rounded-full bg-[#72383D]" />
 
-                                        <span className="font-mono text-[9px] font-bold tracking-[0.08em]">
+                                        <span className="font-mono text-[11px] font-bold tracking-[0.08em]">
                                             NEW CASE
                                         </span>
                                     </div>
@@ -349,11 +272,11 @@ export default function IntakePage() {
                             <div className="border-b border-[#322D29]/10 px-6 py-5">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                        <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                             CASE SUBJECT
                                         </p>
 
-                                        <p className="mt-1 text-[9px] text-[#322D29]/35">
+                                        <p className="mt-1 text-[11px] text-[#322D29]/35">
                                             Enter the blockchain address to
                                             investigate.
                                         </p>
@@ -364,7 +287,7 @@ export default function IntakePage() {
                             </div>
 
                             <div className="p-6">
-                                <label className="font-mono text-[8px] font-bold tracking-[0.14em] text-[#322D29]/45">
+                                <label className="font-mono text-[9px] font-bold tracking-[0.14em] text-[#322D29]/45">
                                     SUSPECT WALLET ADDRESS
                                 </label>
 
@@ -397,13 +320,13 @@ export default function IntakePage() {
                                     <div className="mt-3 flex items-start gap-2 text-[#72383D]">
                                         <CircleAlert className="mt-0.5 h-3.5 w-3.5 shrink-0" />
 
-                                        <p className="font-mono text-[8px] leading-5">
+                                        <p className="font-mono text-[9px] leading-5">
                                             {error}
                                         </p>
                                     </div>
                                 ) : (
                                     <div className="mt-4 flex flex-col justify-between gap-3 sm:flex-row sm:items-center">
-                                        <p className="font-mono text-[7px] leading-5 tracking-[0.05em] text-[#322D29]/30">
+                                        <p className="font-mono text-[9px] leading-5 tracking-[0.05em] text-[#322D29]/30">
                                             ETHEREUM ADDRESS / 42 CHARACTERS /
                                             0x PREFIX
                                         </p>
@@ -429,7 +352,7 @@ export default function IntakePage() {
                                                     setWallet(example);
                                                 }
                                             }}
-                                            className="flex items-center gap-2 self-start font-mono text-[7px] font-bold tracking-[0.1em] text-[#72383D] transition hover:text-[#322D29]"
+                                            className="flex items-center gap-2 self-start font-mono text-[9px] font-bold tracking-[0.1em] text-[#72383D] transition hover:text-[#322D29]"
                                         >
                                             <Copy className="h-3 w-3" />
 
@@ -448,11 +371,11 @@ export default function IntakePage() {
                             <div className="border-b border-[#322D29]/10 px-6 py-5">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                        <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                             NETWORK
                                         </p>
 
-                                        <p className="mt-1 text-[9px] text-[#322D29]/35">
+                                        <p className="mt-1 text-[11px] text-[#322D29]/35">
                                             Select the blockchain network.
                                         </p>
                                     </div>
@@ -489,7 +412,7 @@ export default function IntakePage() {
                                                         {item.symbol}
                                                     </p>
 
-                                                    <p className="mt-2 text-[9px] font-bold tracking-[0.08em]">
+                                                    <p className="mt-2 text-[11px] font-bold tracking-[0.08em]">
                                                         {item.name}
                                                     </p>
                                                 </div>
@@ -510,7 +433,7 @@ export default function IntakePage() {
                                                         }`}
                                                 />
 
-                                                <span className="font-mono text-[6px] font-bold tracking-[0.12em] text-[#322D29]/35">
+                                                <span className="font-mono text-[9px] font-bold tracking-[0.12em] text-[#322D29]/35">
                                                     {item.status}
                                                 </span>
                                             </div>
@@ -526,11 +449,11 @@ export default function IntakePage() {
                             <div className="border-b border-[#322D29]/10 px-6 py-5">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                        <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                             INVESTIGATION DEPTH
                                         </p>
 
-                                        <p className="mt-1 text-[9px] text-[#322D29]/35">
+                                        <p className="mt-1 text-[11px] text-[#322D29]/35">
                                             Define how far relationships should
                                             be followed.
                                         </p>
@@ -558,7 +481,7 @@ export default function IntakePage() {
                                         >
                                             <div className="flex items-center justify-between">
                                                 <span
-                                                    className={`font-mono text-[9px] font-bold tracking-[0.12em] ${active
+                                                    className={`font-mono text-[11px] font-bold tracking-[0.12em] ${active
                                                             ? "text-[#72383D]"
                                                             : ""
                                                         }`}
@@ -571,7 +494,7 @@ export default function IntakePage() {
                                                 )}
                                             </div>
 
-                                            <p className="mt-3 text-[8px] leading-4 text-[#322D29]/40">
+                                            <p className="mt-3 text-[9px] leading-4 text-[#322D29]/40">
                                                 {item.detail}
                                             </p>
                                         </button>
@@ -586,11 +509,11 @@ export default function IntakePage() {
                             <div className="border-b border-[#322D29]/10 px-6 py-5">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                        <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                             ANALYSIS MODE
                                         </p>
 
-                                        <p className="mt-1 text-[9px] text-[#322D29]/35">
+                                        <p className="mt-1 text-[11px] text-[#322D29]/35">
                                             Choose the primary investigation
                                             lens.
                                         </p>
@@ -632,7 +555,7 @@ export default function IntakePage() {
                                         >
                                             <div className="flex items-center justify-between gap-3">
                                                 <p
-                                                    className={`text-[9px] font-bold tracking-[0.1em] ${active
+                                                    className={`text-[11px] font-bold tracking-[0.1em] ${active
                                                             ? "text-[#72383D]"
                                                             : ""
                                                         }`}
@@ -645,7 +568,7 @@ export default function IntakePage() {
                                                 )}
                                             </div>
 
-                                            <p className="mt-3 text-[8px] leading-5 text-[#322D29]/40">
+                                            <p className="mt-3 text-[9px] leading-5 text-[#322D29]/40">
                                                 {item.detail}
                                             </p>
                                         </button>
@@ -664,11 +587,11 @@ export default function IntakePage() {
                             <div className="border-b border-[#EFE9E1]/10 px-6 py-5">
                                 <div className="flex items-center justify-between">
                                     <div>
-                                        <p className="font-mono text-[9px] font-bold tracking-[0.15em]">
+                                        <p className="font-mono text-[11px] font-bold tracking-[0.15em]">
                                             INVESTIGATION READY
                                         </p>
 
-                                        <p className="mt-1 font-mono text-[7px] tracking-[0.12em] text-[#EFE9E1]/30">
+                                        <p className="mt-1 font-mono text-[9px] tracking-[0.12em] text-[#EFE9E1]/30">
                                             CONFIGURATION SUMMARY
                                         </p>
                                     </div>
@@ -705,7 +628,7 @@ export default function IntakePage() {
                             </div>
 
                             <div className="border-t border-[#EFE9E1]/10 p-6">
-                                <p className="font-mono text-[7px] font-bold tracking-[0.14em] text-[#EFE9E1]/30">
+                                <p className="font-mono text-[9px] font-bold tracking-[0.14em] text-[#EFE9E1]/30">
                                     SUBJECT
                                 </p>
 
@@ -717,7 +640,7 @@ export default function IntakePage() {
                             <div className="border-t border-[#EFE9E1]/10 p-6">
                                 <button
                                     type="submit"
-                                    className="group flex w-full items-center justify-between bg-[#72383D] px-5 py-4 text-left text-[9px] font-bold tracking-[0.14em] text-[#EFE9E1] shadow-[0_10px_30px_rgba(114,56,61,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#EFE9E1] hover:text-[#72383D]"
+                                    className="group flex w-full items-center justify-between bg-[#72383D] px-5 py-4 text-left text-[11px] font-bold tracking-[0.14em] text-[#EFE9E1] shadow-[0_10px_30px_rgba(114,56,61,0.25)] transition-all duration-300 hover:-translate-y-0.5 hover:bg-[#EFE9E1] hover:text-[#72383D]"
                                 >
                                     <span>
                                         START ANALYSIS
@@ -726,7 +649,7 @@ export default function IntakePage() {
                                     <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-1" />
                                 </button>
 
-                                <p className="mt-4 text-center font-mono text-[6px] leading-4 tracking-[0.08em] text-[#EFE9E1]/25">
+                                <p className="mt-4 text-center font-mono text-[9px] leading-4 tracking-[0.08em] text-[#EFE9E1]/25">
                                     YOU WILL ENTER THE INVESTIGATION
                                     WORKSPACE AFTER ANALYSIS INITIALIZES
                                 </p>
@@ -737,7 +660,7 @@ export default function IntakePage() {
 
                         <div className="mt-5 border border-[#322D29]/15 bg-[#D9D9D9]/30">
                             <div className="border-b border-[#322D29]/10 px-5 py-4">
-                                <p className="font-mono text-[8px] font-bold tracking-[0.14em]">
+                                <p className="font-mono text-[9px] font-bold tracking-[0.14em]">
                                     CASE WORKFLOW
                                 </p>
                             </div>
@@ -787,7 +710,7 @@ export default function IntakePage() {
             ============================================================ */}
 
             <footer className="border-t border-[#EFE9E1]/10 bg-[#292522] text-[#EFE9E1]">
-                <div className="mx-auto flex max-w-[1600px] flex-col gap-5 px-6 py-9 text-[8px] font-semibold tracking-[0.17em] text-[#EFE9E1]/35 sm:flex-row sm:items-center sm:justify-between lg:px-10">
+                <div className="mx-auto flex max-w-[1600px] flex-col gap-5 px-6 py-9 text-[9px] font-semibold tracking-[0.17em] text-[#EFE9E1]/35 sm:flex-row sm:items-center sm:justify-between lg:px-10">
                     <span>
                         CRYPTOGRAPH / CASE INTAKE
                     </span>
@@ -818,11 +741,11 @@ function SummaryRow({
 }) {
     return (
         <div className="flex items-center justify-between border-b border-[#EFE9E1]/10 px-6 py-4">
-            <span className="font-mono text-[7px] font-bold tracking-[0.13em] text-[#EFE9E1]/30">
+            <span className="font-mono text-[9px] font-bold tracking-[0.13em] text-[#EFE9E1]/30">
                 {label}
             </span>
 
-            <span className="font-mono text-[8px] font-bold tracking-[0.08em] text-[#EFE9E1]/70">
+            <span className="font-mono text-[9px] font-bold tracking-[0.08em] text-[#EFE9E1]/70">
                 {value}
             </span>
         </div>
@@ -845,7 +768,7 @@ function WorkflowStep({
     return (
         <div className="flex items-center gap-3">
             <span
-                className={`flex h-7 w-7 items-center justify-center rounded-full border font-mono text-[7px] font-bold ${active
+                className={`flex h-7 w-7 items-center justify-center rounded-full border font-mono text-[9px] font-bold ${active
                         ? "border-[#72383D] bg-[#72383D] text-[#EFE9E1]"
                         : "border-[#322D29]/15 text-[#322D29]/30"
                     }`}
@@ -854,7 +777,7 @@ function WorkflowStep({
             </span>
 
             <span
-                className={`text-[8px] font-bold tracking-[0.1em] ${active
+                className={`text-[9px] font-bold tracking-[0.1em] ${active
                         ? "text-[#72383D]"
                         : "text-[#322D29]/35"
                     }`}
