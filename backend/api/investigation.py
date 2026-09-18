@@ -23,10 +23,12 @@ router = APIRouter()
 
 class InvestigationRequest(BaseModel):
     wallet_address: str
+
     # Optional caller-supplied case reference (e.g. an NCRP complaint
     # number). If omitted, a case id is generated so the investigation
     # can still be recorded and correlated against future cases.
     case_id: str | None = None
+
     # Optional context about the underlying complaint (e.g. a
     # complainant reference, filing date). Stored as-is and included
     # in the investigator report; this system has no access to a
@@ -100,13 +102,18 @@ def investigate_wallet(request: InvestigationRequest):
     # ---------------------------------------------------------------
     try:
         expansion = expand_investigation(
-    wallet_address=address,
-    max_depth=2,
-    max_targets_per_wallet=5,
-    max_pages_per_wallet=2,
-    page_size=100,
-    root_transactions=transactions,
-    )
+            wallet_address=address,
+            max_depth=2,
+            max_targets_per_wallet=5,
+            max_pages_per_wallet=2,
+            page_size=100,
+            root_transactions=transactions,
+        )
+    except (ConnectionError, TimeoutError, RuntimeError, ValueError) as exc:
+        raise HTTPException(
+            status_code=502,
+            detail=f"Investigation expansion failed: {exc}",
+        ) from exc
 
     # ---------------------------------------------------------------
     # 4. Attribute discovered wallets
@@ -129,7 +136,12 @@ def investigate_wallet(request: InvestigationRequest):
             wallet_evidence = evidence
         else:
             node_transactions = wallet_transactions.get(wallet, [])
-            node_signals = calculate_risk_signals(node_transactions, wallet)
+
+            node_signals = calculate_risk_signals(
+                node_transactions,
+                wallet,
+            )
+
             wallet_evidence = generate_evidence(
                 node_transactions,
                 wallet,
@@ -173,7 +185,10 @@ def investigate_wallet(request: InvestigationRequest):
     # ---------------------------------------------------------------
     case_id = request.case_id or f"CASE-{uuid.uuid4().hex[:8]}"
 
-    touched_wallets = [node["address"] for node in expansion["nodes"]]
+    touched_wallets = [
+        node["address"]
+        for node in expansion["nodes"]
+    ]
 
     related_cases = find_related_cases(
         case_id=case_id,
