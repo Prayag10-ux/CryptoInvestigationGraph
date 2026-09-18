@@ -1,0 +1,176 @@
+@import "tailwindcss";
+
+:root {
+  --background: #f1ece5;
+  --foreground: #252321;
+  --burgundy: #71353b;
+  --stone: #e5ded5;
+  --muted: #a9998a;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  margin: 0;
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+::selection {
+  background: #71353b;
+  color: #f1ece5;
+}
+
+/* ================================================================
+   NAVIGATION
+================================================================ */
+
+.nav-link {
+  position: relative;
+  font-family: var(--font-geist-mono), monospace;
+  font-size: 8px;
+  font-weight: 600;
+  letter-spacing: 0.18em;
+  color: rgba(37, 35, 33, 0.48);
+  transition: color 200ms ease;
+}
+
+.nav-link::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: -7px;
+  width: 0;
+  height: 1px;
+  background: #71353b;
+  transition: width 250ms ease;
+}
+
+.nav-link:hover {
+  color: #71353b;
+}
+
+.nav-link:hover::after {
+  width: 100%;
+}
+
+/* ================================================================
+   GRAPH
+================================================================ */
+
+.graph-grid {
+  background-image:
+    linear-gradient(rgba(37, 35, 33, 0.055) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(37, 35, 33, 0.055) 1px, transparent 1px);
+  background-size: 54px 54px;
+}
+
+.graph-line {
+  stroke: #a9998a;
+  stroke-width: 1.1;
+  opacity: 0.75;
+}
+
+.graph-line.secondary {
+  stroke: #bfb3a7;
+  opacity: 0.65;
+}
+
+.graph-highlight {
+  stroke: #71353b;
+  stroke-width: 2;
+  stroke-dasharray: 7 7;
+  opacity: 0.9;
+  animation: dashMove 2.5s linear infinite;
+}
+
+@keyframes dashMove {
+  to {
+    stroke-dashoffset: -28;
+  }
+}
+
+.node-ripple {
+  animation: nodeRipple 1.8s ease-out infinite;
+}
+
+@keyframes nodeRipple {
+  0% {
+    opacity: 0.7;
+    transform: scale(0.75);
+  }
+
+  100% {
+    opacity: 0;
+    transform: scale(1.4);
+  }
+}
+
+/* ================================================================
+   METHOD
+================================================================ */
+
+.method-card {
+  transition:
+    background-color 300ms ease,
+    transform 300ms ease;
+}
+
+.method-card:hover {
+  background: rgba(255, 255, 255, 0.32);
+}
+
+/* ================================================================
+   EVIDENCE
+================================================================ */
+
+.evidence-row {
+  transition:
+    padding-left 300ms ease,
+    background-color 300ms ease;
+}
+
+.evidence-row:hover {
+  padding-left: 12px;
+  background: rgba(37, 35, 33, 0.025);
+}
+
+/* ================================================================
+   RESPONSIVE
+================================================================ */
+
+@media (max-width: 1024px) {
+  .graph-grid {
+    background-size: 44px 44px;
+  }
+}
+
+@media (max-width: 640px) {
+  .graph-grid {
+    background-size: 36px 36px;
+  }
+}
+
+.graph-dash {
+  animation: graphDash 2.5s linear infinite;
+}
+
+@keyframes graphDash {
+  to {
+    stroke-dashoffset: -26;
+  }
+}
