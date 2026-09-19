@@ -66,12 +66,13 @@ export default function IntakePage() {
     const [mode, setMode] = useState("BEHAVIOURAL");
     const [error, setError] = useState("");
     const [copied, setCopied] = useState(false);
+    const [loading, setLoading] = useState(false);
 
     function isValidWallet(value: string) {
         return /^0x[a-fA-F0-9]{40}$/.test(value.trim());
     }
 
-    function handleSubmit(event: FormEvent<HTMLFormElement>) {
+    async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
 
         if (!wallet.trim()) {
@@ -87,21 +88,52 @@ export default function IntakePage() {
         }
 
         setError("");
+        setLoading(true);
 
-        /*
-         * The investigation page currently uses its own demo dataset.
-         * Once the backend is connected, this is where the submitted
-         * case configuration will be passed into the analysis engine.
-         */
-        const params = new URLSearchParams({
-            case: caseId,
-            wallet: wallet.trim(),
-            network,
-            depth: String(depth),
-            mode,
-        });
+        try {
+            const response = await fetch("/api/investigate", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    wallet_address: wallet.trim(),
+                    case_id: caseId,
+                    complaint_metadata: {
+                        network,
+                        investigation_depth: depth,
+                        analysis_mode: mode,
+                    },
+                }),
+            });
 
-        window.location.href = `/investigation?${params.toString()}`;
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data?.detail ||
+                        data?.message ||
+                        "Investigation request failed.",
+                );
+            }
+
+            sessionStorage.setItem(
+                "investigationData",
+                JSON.stringify(data),
+            );
+
+            window.location.href = `/investigation?case=${encodeURIComponent(
+                caseId,
+            )}`;
+        } catch (err) {
+            setError(
+                err instanceof Error
+                    ? err.message
+                    : "Unable to start the investigation.",
+            );
+        } finally {
+            setLoading(false);
+        }
     }
 
     async function copyExample() {

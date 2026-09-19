@@ -41,7 +41,7 @@ type GraphEdge = {
     note: string;
 };
 
-const nodes: NodeData[] = [
+const demoNodes: NodeData[] = [
     {
         id: "subject",
         address: "0x71...8F2",
@@ -109,7 +109,7 @@ const nodes: NodeData[] = [
  * Later, these can be replaced directly with relationships returned
  * from the blockchain/backend.
  */
-const graphEdges: GraphEdge[] = [
+const demoGraphEdges: GraphEdge[] = [
     {
         id: "subject-inbound",
         from: "subject",
@@ -154,7 +154,7 @@ const graphEdges: GraphEdge[] = [
     },
 ];
 
-const trail = [
+const demoTrail = [
     {
         time: "09:14:21",
         amount: "4.82 ETH",
@@ -186,10 +186,282 @@ const trail = [
     },
 ];
 
-export default function InvestigationPage() {
-    const [selectedNode, setSelectedNode] = useState<NodeData | null>(
-        nodes[0],
+
+type RawRecord = Record<string, unknown>;
+
+function shortenAddress(value: string) {
+    if (!value) return "UNKNOWN";
+    if (value.length <= 14) return value;
+    return `${value.slice(0, 6)}...${value.slice(-4)}`;
+}
+
+function collectTransactions(value: unknown, output: RawRecord[] = []) {
+    if (Array.isArray(value)) {
+        for (const item of value) {
+            collectTransactions(item, output);
+        }
+        return output;
+    }
+
+    if (!value || typeof value !== "object") return output;
+
+    const obj = value as RawRecord;
+
+    const from =
+        typeof obj.from_wallet === "string"
+            ? obj.from_wallet
+            : typeof obj.from === "string"
+                ? obj.from
+                : null;
+
+    const to =
+        typeof obj.to_wallet === "string"
+            ? obj.to_wallet
+            : typeof obj.to === "string"
+                ? obj.to
+                : null;
+
+    if (from && to) {
+        output.push(obj);
+    }
+
+    for (const child of Object.values(obj)) {
+        if (child && typeof child === "object") {
+            collectTransactions(child, output);
+        }
+    }
+
+    return output;
+}
+
+function numberValue(value: unknown) {
+    const n = Number(value);
+    return Number.isFinite(n) ? n : 0;
+}
+
+function buildLiveGraph(data: unknown, rootWallet: string) {
+    const raw = collectTransactions(data);
+    const seen = new Set<string>();
+    const transactions = raw.filter((tx) => {
+        const hash =
+            typeof tx.transaction_hash === "string"
+                ? tx.transaction_hash
+                : "";
+
+        const from =
+            typeof tx.from_wallet === "string"
+                ? tx.from_wallet
+                : typeof tx.from === "string"
+                    ? tx.from
+                    : "";
+
+        const to =
+            typeof tx.to_wallet === "string"
+                ? tx.to_wallet
+                : typeof tx.to === "string"
+                    ? tx.to
+                    : "";
+
+        const timestamp =
+            typeof tx.timestamp === "string"
+                ? tx.timestamp
+                : "";
+
+        const key =
+            hash ||
+            `${from}|${to}|${timestamp}|${numberValue(tx.value_eth)}`;
+
+        if (seen.has(key)) return false;
+        seen.add(key);
+        return true;
+    });
+
+    if (transactions.length === 0) {
+        return {
+            nodes: demoNodes,
+            graphEdges: demoGraphEdges,
+            trail: demoTrail,
+        };
+    }
+
+    const addressSet = new Set<string>();
+
+    for (const tx of transactions) {
+        const from =
+            typeof tx.from_wallet === "string"
+                ? tx.from_wallet
+                : typeof tx.from === "string"
+                    ? tx.from
+                    : "";
+
+        const to =
+            typeof tx.to_wallet === "string"
+                ? tx.to_wallet
+                : typeof tx.to === "string"
+                    ? tx.to
+                    : "";
+
+        if (from) addressSet.add(from.toLowerCase());
+        if (to) addressSet.add(to.toLowerCase());
+    }
+
+    if (rootWallet) {
+        addressSet.add(rootWallet.toLowerCase());
+    }
+
+    const addresses = [...addressSet].slice(0, 18);
+    const root = rootWallet.toLowerCase();
+
+    const nodes = addresses.map((address, index) => {
+        const related = transactions.filter((tx) => {
+            const from =
+                typeof tx.from_wallet === "string"
+                    ? tx.from_wallet.toLowerCase()
+                    : typeof tx.from === "string"
+                        ? tx.from.toLowerCase()
+                        : "";
+
+            const to =
+                typeof tx.to_wallet === "string"
+                    ? tx.to_wallet.toLowerCase()
+                    : typeof tx.to === "string"
+                        ? tx.to.toLowerCase()
+                        : "";
+
+            return from === address || to === address;
+        });
+
+        const volume = related.reduce(
+            (sum, tx) => sum + numberValue(tx.value_eth),
+            0,
+        );
+
+        const inbound = related.filter((tx) => {
+            const to =
+                typeof tx.to_wallet === "string"
+                    ? tx.to_wallet.toLowerCase()
+                    : typeof tx.to === "string"
+                        ? tx.to.toLowerCase()
+                        : "";
+            return to === address;
+        }).length;
+
+        const outbound = related.filter((tx) => {
+            const from =
+                typeof tx.from_wallet === "string"
+                    ? tx.from_wallet.toLowerCase()
+                    : typeof tx.from === "string"
+                        ? tx.from.toLowerCase()
+                        : "";
+            return from === address;
+        }).length;
+
+        const angle =
+            addresses.length > 1
+                ? (index / addresses.length) * Math.PI * 2
+                : 0;
+
+        const left = 50 + Math.cos(angle) * 35;
+        const top = 50 + Math.sin(angle) * 33;
+
+        const isRoot = address === root;
+
+        return {
+            id: `wallet-${index}`,
+            address: shortenAddress(address),
+            label: isRoot ? "SUBJECT" : undefined,
+            suspicious: false,
+            type: "wallet" as const,
+            transactions: related.length,
+            volume: `${volume.toFixed(2)} ETH`,
+            relationship: isRoot
+                ? "PRIMARY ADDRESS"
+                : inbound > outbound
+                    ? "INBOUND"
+                    : "OUTBOUND",
+            position: `left-[${Math.max(8, Math.min(92, left))}%] top-[${Math.max(18, Math.min(82, top))}%]`,
+        };
+    });
+
+    const nodeByAddress = new Map(
+        addresses.map((address, index) => [
+            address,
+            `wallet-${index}`,
+        ]),
     );
+
+    const graphEdges = transactions
+        .slice(0, 24)
+        .map((tx, index) => {
+            const from =
+                typeof tx.from_wallet === "string"
+                    ? tx.from_wallet.toLowerCase()
+                    : typeof tx.from === "string"
+                        ? tx.from.toLowerCase()
+                        : "";
+
+            const to =
+                typeof tx.to_wallet === "string"
+                    ? tx.to_wallet.toLowerCase()
+                    : typeof tx.to === "string"
+                        ? tx.to.toLowerCase()
+                        : "";
+
+            const fromId = nodeByAddress.get(from);
+            const toId = nodeByAddress.get(to);
+
+            if (!fromId || !toId) return null;
+
+            return {
+                id: `live-edge-${index}`,
+                from: fromId,
+                to: toId,
+                amount: `${numberValue(tx.value_eth).toFixed(4)} ETH`,
+                note: "BLOCKCHAIN TRANSFER",
+            };
+        })
+        .filter(Boolean) as GraphEdge[];
+
+    const trail = transactions
+        .slice(0, 8)
+        .map((tx, index) => {
+            const from =
+                typeof tx.from_wallet === "string"
+                    ? tx.from_wallet
+                    : typeof tx.from === "string"
+                        ? tx.from
+                        : "";
+
+            const to =
+                typeof tx.to_wallet === "string"
+                    ? tx.to_wallet
+                    : typeof tx.to === "string"
+                        ? tx.to
+                        : "";
+
+            return {
+                time:
+                    typeof tx.timestamp === "string"
+                        ? tx.timestamp.slice(11, 19)
+                        : `TX-${index + 1}`,
+                amount: `${numberValue(tx.value_eth).toFixed(4)} ETH`,
+                from: shortenAddress(from),
+                to: shortenAddress(to),
+                note: "BLOCKCHAIN TRANSFER",
+                highlighted: index === 0,
+            };
+        });
+
+    return {
+        nodes,
+        graphEdges,
+        trail: trail.length ? trail : demoTrail,
+    };
+}
+
+export default function InvestigationPage() {
+    const [investigationData, setInvestigationData] = useState<unknown>(null);
+    const [selectedNode, setSelectedNode] = useState<NodeData | null>(null);
 
     const [search, setSearch] = useState("");
     const [activeFilter, setActiveFilter] = useState("ALL");
@@ -226,6 +498,65 @@ export default function InvestigationPage() {
         x: 0,
         y: 0,
     });
+
+    useEffect(() => {
+        try {
+            const stored = sessionStorage.getItem("investigationData");
+
+            if (!stored) return;
+
+            setInvestigationData(JSON.parse(stored));
+        } catch {
+            setInvestigationData(null);
+        }
+    }, []);
+
+    const rootWallet = useMemo(() => {
+        const value = investigationData as RawRecord | null;
+
+        if (!value || typeof value !== "object") return "";
+
+        const investigation =
+            value.investigation &&
+            typeof value.investigation === "object"
+                ? (value.investigation as RawRecord)
+                : null;
+
+        const candidates = [
+            investigation?.wallet_address,
+            value.wallet_address,
+            investigation?.suspect_wallet,
+        ];
+
+        return (
+            candidates.find(
+                (item): item is string =>
+                    typeof item === "string" && item.length > 0,
+            ) ?? ""
+        );
+    }, [investigationData]);
+
+    const liveGraph = useMemo(
+        () =>
+            investigationData
+                ? buildLiveGraph(investigationData, rootWallet)
+                : {
+                    nodes: demoNodes,
+                    graphEdges: demoGraphEdges,
+                    trail: demoTrail,
+                },
+        [investigationData, rootWallet],
+    );
+
+    const nodes = liveGraph.nodes;
+    const graphEdges = liveGraph.graphEdges;
+    const trail = liveGraph.trail;
+
+    useEffect(() => {
+        if (!selectedNode && nodes.length > 0) {
+            setSelectedNode(nodes[0]);
+        }
+    }, [nodes, selectedNode]);
 
     /*
      * Set the inspector's initial position to the bottom-right
@@ -780,7 +1111,7 @@ export default function InvestigationPage() {
 
                             <div className="flex flex-wrap items-center gap-4">
                                 <p className="font-mono text-[12px] font-bold tracking-[0.15em] text-[#72383D]">
-                                    CASE / CG-001
+                                    CASE / {rootWallet ? "LIVE" : "CG-001"}
                                 </p>
 
                                 <span
@@ -885,7 +1216,7 @@ export default function InvestigationPage() {
 
                             <div className="p-5">
                                 <p className="font-mono text-[16px] font-medium">
-                                    0x71...8F2
+                                    {nodes[0]?.address ?? "UNKNOWN"}
                                 </p>
 
                                 <p className="mt-2 text-[12px] leading-5 text-[#322D29]/40">
@@ -895,12 +1226,12 @@ export default function InvestigationPage() {
                                 <div className="mt-6 grid grid-cols-2 gap-3">
                                     <MetricBox
                                         label="TRANSACTIONS"
-                                        value="128"
+                                        value={String(nodes[0]?.transactions ?? 0)}
                                     />
 
                                     <MetricBox
                                         label="VOLUME"
-                                        value="42.81 ETH"
+                                        value={nodes[0]?.volume ?? "0 ETH"}
                                     />
                                 </div>
                             </div>
@@ -982,7 +1313,7 @@ export default function InvestigationPage() {
                                 <Behavior
                                     icon={<CircleAlert />}
                                     title="COUNTERPARTY CONCENTRATION"
-                                    detail="61.4%"
+                                    detail={nodes.length > 0 ? `${nodes.length}` : "0"}
                                 />
 
                                 <Behavior
@@ -1134,169 +1465,60 @@ export default function InvestigationPage() {
                                 className="absolute inset-0 h-full w-full"
                                 fill="none"
                             >
-                                <GraphLine
-                                    edgeId="subject-inbound"
-                                    selected={
-                                        selectedNode?.id ===
-                                        "subject" ||
-                                        selectedNode?.id ===
-                                        "inbound" ||
-                                        tracedNode?.id ===
-                                        "subject" ||
-                                        tracedNode?.id ===
-                                        "inbound"
-                                    }
-                                    tracing={tracedEdgeIds.has(
-                                        "subject-inbound",
-                                    )}
-                                    activeTrace={
-                                        traceEdges[
-                                        traceStep - 1
-                                        ] ===
-                                        "subject-inbound"
-                                    }
-                                    x1="450"
-                                    y1="360"
-                                    x2="215"
-                                    y2="195"
-                                />
+                                {graphEdges.map((edge) => {
+                                    const from = nodes.find(
+                                        (node) => node.id === edge.from,
+                                    );
+                                    const to = nodes.find(
+                                        (node) => node.id === edge.to,
+                                    );
 
-                                <GraphLine
-                                    edgeId="subject-outbound"
-                                    selected={
-                                        selectedNode?.id ===
-                                        "subject" ||
-                                        selectedNode?.id ===
-                                        "outbound" ||
-                                        tracedNode?.id ===
-                                        "subject" ||
-                                        tracedNode?.id ===
-                                        "outbound"
-                                    }
-                                    tracing={tracedEdgeIds.has(
-                                        "subject-outbound",
-                                    )}
-                                    activeTrace={
-                                        traceEdges[
-                                        traceStep - 1
-                                        ] ===
-                                        "subject-outbound"
-                                    }
-                                    x1="450"
-                                    y1="360"
-                                    x2="695"
-                                    y2="175"
-                                />
+                                    if (!from || !to) return null;
 
-                                <GraphLine
-                                    edgeId="subject-flagged"
-                                    selected={
-                                        selectedNode?.id ===
-                                        "subject" ||
-                                        selectedNode?.id ===
-                                        "flagged" ||
-                                        tracedNode?.id ===
-                                        "subject" ||
-                                        tracedNode?.id ===
-                                        "flagged"
-                                    }
-                                    tracing={tracedEdgeIds.has(
-                                        "subject-flagged",
-                                    )}
-                                    activeTrace={
-                                        traceEdges[
-                                        traceStep - 1
-                                        ] ===
-                                        "subject-flagged"
-                                    }
-                                    suspicious
-                                    x1="450"
-                                    y1="360"
-                                    x2="205"
-                                    y2="505"
-                                />
+                                    const fromIndex = nodes.indexOf(from);
+                                    const toIndex = nodes.indexOf(to);
 
-                                <GraphLine
-                                    edgeId="subject-exchange"
-                                    selected={
-                                        selectedNode?.id ===
-                                        "subject" ||
-                                        selectedNode?.id ===
-                                        "exchange" ||
-                                        tracedNode?.id ===
-                                        "subject" ||
-                                        tracedNode?.id ===
-                                        "exchange"
-                                    }
-                                    tracing={tracedEdgeIds.has(
-                                        "subject-exchange",
-                                    )}
-                                    activeTrace={
-                                        traceEdges[
-                                        traceStep - 1
-                                        ] ===
-                                        "subject-exchange"
-                                    }
-                                    x1="450"
-                                    y1="360"
-                                    x2="700"
-                                    y2="515"
-                                />
+                                    const point = (index: number) => {
+                                        if (index === 0) {
+                                            return { x: 450, y: 360 };
+                                        }
 
-                                <GraphLine
-                                    edgeId="subject-contract"
-                                    selected={
-                                        selectedNode?.id ===
-                                        "subject" ||
-                                        selectedNode?.id ===
-                                        "contract" ||
-                                        tracedNode?.id ===
-                                        "subject" ||
-                                        tracedNode?.id ===
-                                        "contract"
-                                    }
-                                    tracing={tracedEdgeIds.has(
-                                        "subject-contract",
-                                    )}
-                                    activeTrace={
-                                        traceEdges[
-                                        traceStep - 1
-                                        ] ===
-                                        "subject-contract"
-                                    }
-                                    x1="450"
-                                    y1="360"
-                                    x2="450"
-                                    y2="120"
-                                />
+                                        const angle =
+                                            (index / Math.max(nodes.length - 1, 1)) *
+                                            Math.PI *
+                                            2;
 
-                                <GraphLine
-                                    edgeId="flagged-exchange"
-                                    selected={
-                                        selectedNode?.id ===
-                                        "flagged" ||
-                                        selectedNode?.id ===
-                                        "exchange" ||
-                                        tracedNode?.id ===
-                                        "flagged" ||
-                                        tracedNode?.id ===
-                                        "exchange"
-                                    }
-                                    tracing={tracedEdgeIds.has(
-                                        "flagged-exchange",
-                                    )}
-                                    activeTrace={
-                                        traceEdges[
-                                        traceStep - 1
-                                        ] ===
-                                        "flagged-exchange"
-                                    }
-                                    suspicious
-                                    x1="205"
-                                    y1="505"
-                                    x2="700"
-                                    y2="515"
-                                />
+                                        return {
+                                            x: 450 + Math.cos(angle) * 300,
+                                            y: 360 + Math.sin(angle) * 240,
+                                        };
+                                    };
+
+                                    const p1 = point(fromIndex);
+                                    const p2 = point(toIndex);
+
+                                    return (
+                                        <GraphLine
+                                            key={edge.id}
+                                            edgeId={edge.id}
+                                            selected={
+                                                selectedNode?.id === edge.from ||
+                                                selectedNode?.id === edge.to ||
+                                                tracedNode?.id === edge.from ||
+                                                tracedNode?.id === edge.to
+                                            }
+                                            tracing={tracedEdgeIds.has(edge.id)}
+                                            activeTrace={
+                                                traceEdges[traceStep - 1] === edge.id
+                                            }
+                                            x1={String(p1.x)}
+                                            y1={String(p1.y)}
+                                            x2={String(p2.x)}
+                                            y2={String(p2.y)}
+                                            suspicious={from.suspicious || to.suspicious}
+                                        />
+                                    );
+                                })}
                             </svg>
 
                             {searchedNodes.map((node) => (
