@@ -1,6 +1,6 @@
 "use client";
 import SiteHeader from "./components/SiteHeader";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import {
   ArrowDownRight,
   ArrowRight,
@@ -785,6 +785,7 @@ function GraphNode({
   address,
   onClick,
 }: NodeData & {
+  active?: boolean;
   selected?: boolean;
   onClick: (e: React.MouseEvent<HTMLButtonElement>) => void;
 }) {
