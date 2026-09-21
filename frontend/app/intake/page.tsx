@@ -91,7 +91,7 @@ export default function IntakePage() {
         setLoading(true);
 
         try {
-            const response = await fetch("/api/investigate", {
+            const response = await fetch("http://127.0.0.1:8000/investigate", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
@@ -107,7 +107,18 @@ export default function IntakePage() {
                 }),
             });
 
-            const data = await response.json();
+            const contentType = response.headers.get("content-type") || "";
+
+            let data: any;
+
+            if (contentType.includes("application/json")) {
+                data = await response.json();
+            } else {
+                const text = await response.text();
+                throw new Error(
+                    text || `Investigation request failed (${response.status}).`,
+                );
+            }
 
             if (!response.ok) {
                 throw new Error(

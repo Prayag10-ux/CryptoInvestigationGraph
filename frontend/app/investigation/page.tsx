@@ -187,7 +187,27 @@ const demoTrail = [
 ];
 
 
-type RawRecord = Record<string, unknown>;
+type RawRecord = Record<string, any>;
+
+type BackendNode = {
+    id: string;
+    address: string;
+    label?: string;
+    suspicious?: boolean;
+    type?: "subject" | "wallet" | "exchange" | "contract";
+    transactions?: number;
+    volume?: string;
+    relationship?: string;
+    position?: string;
+};
+
+type BackendEdge = {
+    id: string;
+    from: string;
+    to: string;
+    total_value_eth?: number;
+    transaction_count?: number;
+};
 
 function shortenAddress(value: string) {
     if (!value) return "UNKNOWN";
@@ -195,267 +215,183 @@ function shortenAddress(value: string) {
     return `${value.slice(0, 6)}...${value.slice(-4)}`;
 }
 
-function collectTransactions(value: unknown, output: RawRecord[] = []) {
-    if (Array.isArray(value)) {
-        for (const item of value) {
-            collectTransactions(item, output);
-        }
-        return output;
-    }
+function buildLiveGraph(
+    data: unknown,
+    rootWallet: string,
+) {
+    const value = data as RawRecord;
 
-    if (!value || typeof value !== "object") return output;
+    const backendGraph =
+        value?.graph &&
+        typeof value.graph === "object"
+            ? value.graph
+            : {};
 
-    const obj = value as RawRecord;
+    const backendNodes: BackendNode[] =
+        Array.isArray(backendGraph.nodes)
+            ? backendGraph.nodes
+            : [];
 
-    const from =
-        typeof obj.from_wallet === "string"
-            ? obj.from_wallet
-            : typeof obj.from === "string"
-                ? obj.from
-                : null;
+    const backendEdges: BackendEdge[] =
+        Array.isArray(backendGraph.edges)
+            ? backendGraph.edges
+            : [];
 
-    const to =
-        typeof obj.to_wallet === "string"
-            ? obj.to_wallet
-            : typeof obj.to === "string"
-                ? obj.to
-                : null;
-
-    if (from && to) {
-        output.push(obj);
-    }
-
-    for (const child of Object.values(obj)) {
-        if (child && typeof child === "object") {
-            collectTransactions(child, output);
-        }
-    }
-
-    return output;
-}
-
-function numberValue(value: unknown) {
-    const n = Number(value);
-    return Number.isFinite(n) ? n : 0;
-}
-
-function buildLiveGraph(data: unknown, rootWallet: string) {
-    const raw = collectTransactions(data);
-    const seen = new Set<string>();
-    const transactions = raw.filter((tx) => {
-        const hash =
-            typeof tx.transaction_hash === "string"
-                ? tx.transaction_hash
-                : "";
-
-        const from =
-            typeof tx.from_wallet === "string"
-                ? tx.from_wallet
-                : typeof tx.from === "string"
-                    ? tx.from
-                    : "";
-
-        const to =
-            typeof tx.to_wallet === "string"
-                ? tx.to_wallet
-                : typeof tx.to === "string"
-                    ? tx.to
-                    : "";
-
-        const timestamp =
-            typeof tx.timestamp === "string"
-                ? tx.timestamp
-                : "";
-
-        const key =
-            hash ||
-            `${from}|${to}|${timestamp}|${numberValue(tx.value_eth)}`;
-
-        if (seen.has(key)) return false;
-        seen.add(key);
-        return true;
-    });
-
-    if (transactions.length === 0) {
-        return {
-            nodes: demoNodes,
-            graphEdges: demoGraphEdges,
-            trail: demoTrail,
-        };
-    }
-
-    const addressSet = new Set<string>();
-
-    for (const tx of transactions) {
-        const from =
-            typeof tx.from_wallet === "string"
-                ? tx.from_wallet
-                : typeof tx.from === "string"
-                    ? tx.from
-                    : "";
-
-        const to =
-            typeof tx.to_wallet === "string"
-                ? tx.to_wallet
-                : typeof tx.to === "string"
-                    ? tx.to
-                    : "";
-
-        if (from) addressSet.add(from.toLowerCase());
-        if (to) addressSet.add(to.toLowerCase());
-    }
-
-    if (rootWallet) {
-        addressSet.add(rootWallet.toLowerCase());
-    }
-
-    const addresses = [...addressSet].slice(0, 18);
     const root = rootWallet.toLowerCase();
 
-    const nodes = addresses.map((address, index) => {
-        const related = transactions.filter((tx) => {
-            const from =
-                typeof tx.from_wallet === "string"
-                    ? tx.from_wallet.toLowerCase()
-                    : typeof tx.from === "string"
-                        ? tx.from.toLowerCase()
+    const nodes: NodeData[] =
+        backendNodes.map(
+            (
+                node: BackendNode,
+                index: number,
+            ) => {
+                const address =
+                    typeof node.address === "string"
+                        ? node.address
                         : "";
 
-            const to =
-                typeof tx.to_wallet === "string"
-                    ? tx.to_wallet.toLowerCase()
-                    : typeof tx.to === "string"
-                        ? tx.to.toLowerCase()
-                        : "";
+                const isRoot =
+                    address.toLowerCase() === root ||
+                    node.id === rootWallet;
 
-            return from === address || to === address;
-        });
+                const angle =
+                    backendNodes.length > 1
+                        ? (index /
+                              backendNodes.length) *
+                          Math.PI *
+                          2
+                        : 0;
 
-        const volume = related.reduce(
-            (sum, tx) => sum + numberValue(tx.value_eth),
-            0,
+                const left =
+                    index === 0
+                        ? 50
+                        : 50 +
+                          Math.cos(angle) * 35;
+
+                const top =
+                    index === 0
+                        ? 50
+                        : 50 +
+                          Math.sin(angle) * 33;
+
+                return {
+                    id:
+                        typeof node.id === "string"
+                            ? node.id
+                            : `wallet-${index}`,
+
+                    address:
+                        address || "UNKNOWN",
+
+                    label:
+                        node.label ||
+                        (isRoot
+                            ? "SUBJECT"
+                            : undefined),
+
+                    suspicious:
+                        Boolean(
+                            node.suspicious,
+                        ),
+
+                    type:
+                        node.type ||
+                        (isRoot
+                            ? "subject"
+                            : "wallet"),
+
+                    transactions:
+                        Number(
+                            node.transactions ?? 0,
+                        ),
+
+                    volume:
+                        typeof node.volume ===
+                        "string"
+                            ? node.volume
+                            : "0 ETH",
+
+                    relationship:
+                        node.relationship ||
+                        (isRoot
+                            ? "PRIMARY ADDRESS"
+                            : "COUNTERPARTY"),
+
+                    position:
+                        node.position ||
+                        `left-[${Math.max(
+                            8,
+                            Math.min(
+                                92,
+                                left,
+                            ),
+                        )}%] top-[${Math.max(
+                            18,
+                            Math.min(
+                                82,
+                                top,
+                            ),
+                        )}%]`,
+                };
+            },
         );
 
-        const inbound = related.filter((tx) => {
-            const to =
-                typeof tx.to_wallet === "string"
-                    ? tx.to_wallet.toLowerCase()
-                    : typeof tx.to === "string"
-                        ? tx.to.toLowerCase()
-                        : "";
-            return to === address;
-        }).length;
+    const graphEdges: GraphEdge[] =
+        backendEdges.map(
+            (
+                edge: BackendEdge,
+                index: number,
+            ) => {
+                const valueEth =
+                    Number(
+                        edge.total_value_eth ??
+                            0,
+                    );
 
-        const outbound = related.filter((tx) => {
-            const from =
-                typeof tx.from_wallet === "string"
-                    ? tx.from_wallet.toLowerCase()
-                    : typeof tx.from === "string"
-                        ? tx.from.toLowerCase()
-                        : "";
-            return from === address;
-        }).length;
+                const transactionCount =
+                    Number(
+                        edge.transaction_count ??
+                            0,
+                    );
 
-        const angle =
-            addresses.length > 1
-                ? (index / addresses.length) * Math.PI * 2
-                : 0;
+                return {
+                    id:
+                        typeof edge.id === "string"
+                            ? edge.id
+                            : `edge-${index}`,
 
-        const left = 50 + Math.cos(angle) * 35;
-        const top = 50 + Math.sin(angle) * 33;
+                    from:
+                        typeof edge.from === "string"
+                            ? edge.from
+                            : "",
 
-        const isRoot = address === root;
+                    to:
+                        typeof edge.to === "string"
+                            ? edge.to
+                            : "",
 
-        return {
-            id: `wallet-${index}`,
-            address: shortenAddress(address),
-            label: isRoot ? "SUBJECT" : undefined,
-            suspicious: false,
-            type: "wallet" as const,
-            transactions: related.length,
-            volume: `${volume.toFixed(2)} ETH`,
-            relationship: isRoot
-                ? "PRIMARY ADDRESS"
-                : inbound > outbound
-                    ? "INBOUND"
-                    : "OUTBOUND",
-            position: `left-[${Math.max(8, Math.min(92, left))}%] top-[${Math.max(18, Math.min(82, top))}%]`,
-        };
-    });
+                    amount:
+                        `${valueEth.toFixed(
+                            4,
+                        )} ETH`,
 
-    const nodeByAddress = new Map(
-        addresses.map((address, index) => [
-            address,
-            `wallet-${index}`,
-        ]),
-    );
-
-    const graphEdges = transactions
-        .slice(0, 24)
-        .map((tx, index) => {
-            const from =
-                typeof tx.from_wallet === "string"
-                    ? tx.from_wallet.toLowerCase()
-                    : typeof tx.from === "string"
-                        ? tx.from.toLowerCase()
-                        : "";
-
-            const to =
-                typeof tx.to_wallet === "string"
-                    ? tx.to_wallet.toLowerCase()
-                    : typeof tx.to === "string"
-                        ? tx.to.toLowerCase()
-                        : "";
-
-            const fromId = nodeByAddress.get(from);
-            const toId = nodeByAddress.get(to);
-
-            if (!fromId || !toId) return null;
-
-            return {
-                id: `live-edge-${index}`,
-                from: fromId,
-                to: toId,
-                amount: `${numberValue(tx.value_eth).toFixed(4)} ETH`,
-                note: "BLOCKCHAIN TRANSFER",
-            };
-        })
-        .filter(Boolean) as GraphEdge[];
-
-    const trail = transactions
-        .slice(0, 8)
-        .map((tx, index) => {
-            const from =
-                typeof tx.from_wallet === "string"
-                    ? tx.from_wallet
-                    : typeof tx.from === "string"
-                        ? tx.from
-                        : "";
-
-            const to =
-                typeof tx.to_wallet === "string"
-                    ? tx.to_wallet
-                    : typeof tx.to === "string"
-                        ? tx.to
-                        : "";
-
-            return {
-                time:
-                    typeof tx.timestamp === "string"
-                        ? tx.timestamp.slice(11, 19)
-                        : `TX-${index + 1}`,
-                amount: `${numberValue(tx.value_eth).toFixed(4)} ETH`,
-                from: shortenAddress(from),
-                to: shortenAddress(to),
-                note: "BLOCKCHAIN TRANSFER",
-                highlighted: index === 0,
-            };
-        });
+                    note:
+                        transactionCount > 0
+                            ? `${transactionCount} TRANSACTION${
+                                  transactionCount ===
+                                  1
+                                      ? ""
+                                      : "S"
+                              }`
+                            : "BLOCKCHAIN TRANSFER",
+                };
+            },
+        );
 
     return {
         nodes,
         graphEdges,
-        trail: trail.length ? trail : demoTrail,
+        trail: [],
     };
 }
 
@@ -539,13 +475,19 @@ export default function InvestigationPage() {
     const liveGraph = useMemo(
         () =>
             investigationData
-                ? buildLiveGraph(investigationData, rootWallet)
-                : {
+                ? buildLiveGraph(
+                    investigationData, 
+                    rootWallet
+                )
+             : {
                     nodes: demoNodes,
                     graphEdges: demoGraphEdges,
                     trail: demoTrail,
                 },
-        [investigationData, rootWallet],
+        [
+            investigationData,
+            rootWallet,
+        ],
     );
 
     const nodes = liveGraph.nodes;
