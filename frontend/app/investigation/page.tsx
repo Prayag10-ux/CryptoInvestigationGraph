@@ -786,6 +786,11 @@ export default function InvestigationPage() {
             return trail;
         }
 
+        const timeline = Array.isArray(
+            investigationData?.timeline,
+        )
+            ? investigationData.timeline
+            : [];
         const generatedTrail = [];
 
         for (
@@ -809,10 +814,24 @@ export default function InvestigationPage() {
 
             if (!fromNode || !toNode) continue;
 
+            const timelineEvent = timeline.find(
+                (item: RawRecord) =>
+                    typeof item.from_wallet === "string" &&
+                    typeof item.to_wallet === "string" &&
+                    item.from_wallet.toLowerCase() ===
+                        fromNode.address.toLowerCase() &&
+                    item.to_wallet.toLowerCase() ===
+                        toNode.address.toLowerCase(),
+            );
+            const eventDate = timelineEvent?.timestamp
+                ? new Date(String(timelineEvent.timestamp))
+                : null;
+
             generatedTrail.push({
-                time: `0${9 + Math.floor(index / 2)}:${String(
-                    14 + index * 7,
-                ).padStart(2, "0")}:21`,
+                time: eventDate &&
+                    !Number.isNaN(eventDate.getTime())
+                    ? eventDate.toISOString().slice(11, 19)
+                    : "TIME UNAVAILABLE",
                 amount: edge.amount,
                 from: fromNode.address,
                 to: toNode.address,
@@ -826,7 +845,15 @@ export default function InvestigationPage() {
         return generatedTrail.length > 0
             ? generatedTrail
             : trail;
-    }, [tracedNode, tracePath, traceEdges]);
+    }, [
+        investigationData,
+        trail,
+        nodes,
+        graphEdges,
+        tracedNode,
+        tracePath,
+        traceEdges,
+    ]);
 
     /*
      * Dynamic trace findings.
@@ -1109,7 +1136,16 @@ export default function InvestigationPage() {
                                                 0,
                                             ),
                                         )
-                                        : "2"
+                                        : String(
+                                            Math.max(
+                                                ...nodes.map(
+                                                    (node) =>
+                                                        node.depth ??
+                                                        0,
+                                                ),
+                                                0,
+                                            ),
+                                        )
                                 }
                             />
 
@@ -1120,7 +1156,7 @@ export default function InvestigationPage() {
                                         ? String(
                                             tracePath.length,
                                         )
-                                        : "6"
+                                        : String(nodes.length)
                                 }
                             />
 
@@ -1941,7 +1977,7 @@ export default function InvestigationPage() {
                                     <p className="mt-1 font-mono text-[9px] text-[#EFE9E1]/35">
                                         {tracedNode
                                             ? `${traceEdges.length} GRAPH RELATIONSHIPS`
-                                            : "4 TRANSACTION EVENTS"}
+                                            : `${nodes[0]?.transactions ?? 0} TRANSACTION EVENTS`}
                                     </p>
                                 </div>
                             </div>
@@ -2085,7 +2121,9 @@ export default function InvestigationPage() {
                     </span>
 
                     <span>
-                        ETHEREUM / CASE CG-001
+                        ETHEREUM / CASE{" "}
+                        {investigationData?.investigation?.case_id ??
+                            "CG-001"}
                     </span>
 
                     <span>
