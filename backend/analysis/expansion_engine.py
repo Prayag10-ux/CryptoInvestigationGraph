@@ -75,12 +75,18 @@ def expand_investigation(
             and root_transactions is not None
         ):
             transactions = root_transactions
+               
         else:
-            transactions = fetch_wallet_transactions(
-                address=address,
-                max_pages=max_pages_per_wallet,
-                page_size=page_size,
-            )
+            try:
+                transactions = fetch_wallet_transactions(
+                    address=address,
+                    max_pages=max_pages_per_wallet,
+                    page_size=page_size,
+                )
+            except Exception as exc:
+                raise RuntimeError(
+                    f"Expansion fetch failed for wallet {address}: {exc}"
+                ) from exc
 
         wallet_transactions[address] = transactions
 

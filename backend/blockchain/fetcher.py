@@ -65,8 +65,15 @@ def fetch_wallet_transactions(
 
         if status != "1":
             raise RuntimeError(
-                f"Etherscan API error: {message or 'Unknown error.'}"
+                f"Etherscan API error: "
+                f"address={address}, "
+                f"page={page}, "
+                f"offset={page_size}, "
+                f"status={status}, "
+                f"message={message}, "
+                f"result={result}"
             )
+            
 
         if not isinstance(result, list):
             raise RuntimeError(
