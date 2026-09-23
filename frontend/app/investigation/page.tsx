@@ -27,6 +27,7 @@ type NodeData = {
     label?: string;
     suspicious?: boolean;
     type: "subject" | "wallet" | "exchange" | "contract";
+    depth: number;
     transactions: number;
     volume: string;
     relationship: string;
@@ -47,6 +48,7 @@ const demoNodes: NodeData[] = [
         address: "0x71...8F2",
         label: "SUBJECT",
         type: "subject",
+        depth: 0,
         transactions: 128,
         volume: "42.81 ETH",
         relationship: "PRIMARY ADDRESS",
@@ -56,6 +58,7 @@ const demoNodes: NodeData[] = [
         id: "inbound",
         address: "0x91...A72",
         type: "wallet",
+        depth: 0,
         transactions: 34,
         volume: "8.42 ETH",
         relationship: "INBOUND",
@@ -65,6 +68,7 @@ const demoNodes: NodeData[] = [
         id: "outbound",
         address: "0x72...F19",
         type: "wallet",
+        depth: 0,
         transactions: 19,
         volume: "12.17 ETH",
         relationship: "OUTBOUND",
@@ -76,6 +80,7 @@ const demoNodes: NodeData[] = [
         label: "FLAGGED",
         suspicious: true,
         type: "wallet",
+        depth: 0,
         transactions: 67,
         volume: "17.92 ETH",
         relationship: "SUSPICIOUS",
@@ -86,6 +91,7 @@ const demoNodes: NodeData[] = [
         address: "0xA1...D84",
         label: "EXCHANGE",
         type: "exchange",
+        depth: 0,
         transactions: 23,
         volume: "21.44 ETH",
         relationship: "EXCHANGE",
@@ -95,6 +101,7 @@ const demoNodes: NodeData[] = [
         id: "contract",
         address: "0xF2...91C",
         type: "contract",
+        depth: 0,
         transactions: 42,
         volume: "6.31 ETH",
         relationship: "CONTRACT",
@@ -189,12 +196,17 @@ const demoTrail = [
 
 type RawRecord = Record<string, any>;
 
+type InvestigationData = RawRecord & {
+    risk_signals?: RawRecord;
+};
+
 type BackendNode = {
     id: string;
     address: string;
     label?: string;
     suspicious?: boolean;
     type?: "subject" | "wallet" | "exchange" | "contract";
+    depth?: number;
     transactions?: number;
     volume?: string;
     relationship?: string;
@@ -239,102 +251,97 @@ function buildLiveGraph(
 
     const root = rootWallet.toLowerCase();
 
-    const nodes: NodeData[] =
-        backendNodes.map(
-            (
-                node: BackendNode,
-                index: number,
-            ) => {
-                const address =
-                    typeof node.address === "string"
-                        ? node.address
-                        : "";
+    const nodes: NodeData[] = backendNodes.map(
+        (
+            node: BackendNode,
+            index: number,
+        ) => {
+            const address =
+                typeof node.address === "string"
+                    ? node.address
+                    : "";
 
-                const isRoot =
-                    address.toLowerCase() === root ||
-                    node.id === rootWallet;
+            const isRoot =
+                address.toLowerCase() === root ||
+                node.id === rootWallet;
 
-                const angle =
-                    backendNodes.length > 1
-                        ? (index /
-                              backendNodes.length) *
-                          Math.PI *
-                          2
-                        : 0;
+            const angle =
+                backendNodes.length > 1
+                    ? (index / backendNodes.length) *
+                      Math.PI *
+                      2
+                    : 0;
 
-                const left =
-                    index === 0
-                        ? 50
-                        : 50 +
-                          Math.cos(angle) * 35;
+            const left =
+                index === 0
+                    ? 50
+                    : 50 + Math.cos(angle) * 35;
 
-                const top =
-                    index === 0
-                        ? 50
-                        : 50 +
-                          Math.sin(angle) * 33;
+            const top =
+                index === 0
+                    ? 50
+                    : 50 + Math.sin(angle) * 33;
 
-                return {
-                    id:
-                        typeof node.id === "string"
-                            ? node.id
-                            : `wallet-${index}`,
+            const fallbackPosition =
+                `left-[${Math.max(
+                    8,
+                    Math.min(92, left),
+                )}%] top-[${Math.max(
+                    18,
+                    Math.min(82, top),
+                )}%]`;
 
-                    address:
-                        address || "UNKNOWN",
+            return {
+                id:
+                    typeof node.id === "string"
+                        ? node.id
+                        : `wallet-${index}`,
 
-                    label:
-                        node.label ||
-                        (isRoot
-                            ? "SUBJECT"
-                            : undefined),
+                address:
+                    address || "UNKNOWN",
 
-                    suspicious:
-                        Boolean(
-                            node.suspicious,
-                        ),
+                depth: Number(
+                    node.depth ?? 0,
+                ),
 
-                    type:
-                        node.type ||
-                        (isRoot
-                            ? "subject"
-                            : "wallet"),
+                label:
+                    node.label ||
+                    (isRoot
+                        ? "SUBJECT"
+                        : undefined),
 
-                    transactions:
-                        Number(
-                            node.transactions ?? 0,
-                        ),
+                suspicious:
+                    Boolean(node.suspicious),
 
-                    volume:
-                        typeof node.volume ===
-                        "string"
-                            ? node.volume
-                            : "0 ETH",
+                type:
+                    node.type ||
+                    (isRoot
+                        ? "subject"
+                        : "wallet"),
 
-                    relationship:
-                        node.relationship ||
-                        (isRoot
-                            ? "PRIMARY ADDRESS"
-                            : "COUNTERPARTY"),
+                transactions:
+                    Number(
+                        node.transactions ?? 0,
+                    ),
 
-                    position:
-                        node.position ||
-                        `left-[${Math.max(
-                            8,
-                            Math.min(
-                                92,
-                                left,
-                            ),
-                        )}%] top-[${Math.max(
-                            18,
-                            Math.min(
-                                82,
-                                top,
-                            ),
-                        )}%]`,
-                };
-            },
-        );
+                volume:
+                    typeof node.volume === "string"
+                        ? node.volume
+                        : "—",
+
+                relationship:
+                    node.relationship ||
+                    (isRoot
+                        ? "PRIMARY ADDRESS"
+                        : "COUNTERPARTY"),
+
+                position:
+                    typeof node.position === "string"
+                        ? node.position
+                        : fallbackPosition,
+            };
+        },
+    );
 
     const graphEdges: GraphEdge[] =
         backendEdges.map(
@@ -342,17 +349,13 @@ function buildLiveGraph(
                 edge: BackendEdge,
                 index: number,
             ) => {
-                const valueEth =
-                    Number(
-                        edge.total_value_eth ??
-                            0,
-                    );
+                const valueEth = Number(
+                    edge.total_value_eth ?? 0,
+                );
 
-                const transactionCount =
-                    Number(
-                        edge.transaction_count ??
-                            0,
-                    );
+                const transactionCount = Number(
+                    edge.transaction_count ?? 0,
+                );
 
                 return {
                     id:
@@ -371,15 +374,12 @@ function buildLiveGraph(
                             : "",
 
                     amount:
-                        `${valueEth.toFixed(
-                            4,
-                        )} ETH`,
+                        `${valueEth.toFixed(4)} ETH`,
 
                     note:
                         transactionCount > 0
                             ? `${transactionCount} TRANSACTION${
-                                  transactionCount ===
-                                  1
+                                  transactionCount === 1
                                       ? ""
                                       : "S"
                               }`
@@ -396,7 +396,8 @@ function buildLiveGraph(
 }
 
 export default function InvestigationPage() {
-    const [investigationData, setInvestigationData] = useState<unknown>(null);
+    const [investigationData, setInvestigationData] =
+        useState<InvestigationData | null>(null);
     const [selectedNode, setSelectedNode] = useState<NodeData | null>(null);
 
     const [search, setSearch] = useState("");
@@ -471,6 +472,8 @@ export default function InvestigationPage() {
             ) ?? ""
         );
     }, [investigationData]);
+
+    const riskSignals = investigationData?.risk_signals ?? {};
 
     const liveGraph = useMemo(
         () =>
@@ -830,32 +833,35 @@ export default function InvestigationPage() {
      */
     const activeFindings = useMemo(() => {
         if (!tracedNode) {
-            return [
-                {
-                    number: "01",
-                    icon: <ShieldAlert />,
-                    title: "HIGH COUNTERPARTY DIVERSITY",
-                    detail:
-                        "17 unique inbound wallets observed across the analyzed period.",
-                    value: "17",
-                },
-                {
-                    number: "02",
-                    icon: <Wallet />,
-                    title: "INBOUND CONCENTRATION",
-                    detail:
-                        "Largest observed counterparty accounts for 61.4% of inbound volume.",
-                    value: "61.4%",
-                },
-                {
-                    number: "03",
-                    icon: <GitBranch />,
-                    title: "FORWARD MOVEMENT",
-                    detail:
-                        "Funds move through multiple addresses within short transaction intervals.",
-                    value: "DETECTED",
-                },
-            ];
+            const evidence = Array.isArray(investigationData?.evidence)
+                ? investigationData.evidence
+                : [];
+
+            return evidence.slice(0, 3).map((item: RawRecord, index) => ({
+                number: String(index + 1).padStart(2, "0"),
+                icon:
+                    item.severity === "HIGH" ? (
+                        <ShieldAlert />
+                    ) : item.code?.toLowerCase().includes("movement") ? (
+                        <GitBranch />
+                    ) : (
+                        <Wallet />
+                    ),
+                title: String(
+                    item.title ??
+                        item.code ??
+                        "INVESTIGATION FINDING",
+                ).toUpperCase(),
+                detail: String(
+                    item.finding ??
+                        item.why_it_matters ??
+                        "Evidence identified during blockchain analysis.",
+                ),
+                value: String(
+                    item.severity ??
+                        "OBSERVED",
+                ).toUpperCase(),
+            }));
         }
 
         return [
@@ -907,27 +913,39 @@ export default function InvestigationPage() {
      */
     const activeEvidence = useMemo(() => {
         if (!tracedNode) {
-            return [
-                {
-                    icon: <FileText />,
-                    title: "TRANSACTION PROVENANCE",
-                    detail:
-                        "4 transactions supporting the selected trace",
-                },
-                {
-                    icon: <GitBranch />,
-                    title: "RELATIONSHIP PATH",
-                    detail:
-                        "Subject → intermediary → flagged address",
-                },
-                {
-                    icon: <CircleAlert />,
-                    title: "BEHAVIOURAL INDICATOR",
-                    detail:
-                        "Short-interval forward movement detected",
-                },
-            ];
+            const evidence = Array.isArray(investigationData?.evidence)
+                ? investigationData.evidence
+                : [];
+
+            return evidence.slice(0, 3).map((item: RawRecord) => ({
+                icon:
+                    item.code?.toLowerCase().includes("movement") ? (
+                        <GitBranch />
+                    ) : item.code?.toLowerCase().includes("transaction") ? (
+                        <FileText />
+                    ) : (
+                        <CircleAlert />
+                    ),
+                title: String(
+                    item.title ??
+                        item.code ??
+                        "INVESTIGATION EVIDENCE",
+                ).toUpperCase(),
+                detail: String(
+                    item.finding ??
+                        item.why_it_matters ??
+                        "Evidence identified during blockchain analysis.",
+                ),
+            }));
         }
+
+        const tracedNodes = tracePath
+            .map((id) => nodes.find((node) => node.id === id))
+            .filter(Boolean);
+
+        const suspiciousReached = tracedNodes.some(
+            (node) => node?.suspicious,
+        );
 
         return [
             {
@@ -935,26 +953,23 @@ export default function InvestigationPage() {
                 title: "TRANSACTION PROVENANCE",
                 detail: `${traceEdges.length} graph relationships supporting the current trace`,
             },
+
             {
                 icon: <GitBranch />,
                 title: "RELATIONSHIP PATH",
                 detail:
-                    tracePath
-                        .map((id) => {
-                            return nodes.find(
-                                (node) => node.id === id,
-                            )?.address;
-                        })
+                    tracedNodes
+                        .map((node) => node?.address)
                         .filter(Boolean)
-                        .join(" → "),
+                        .join(" → ") || "No relationship path available",
             },
+
             {
                 icon: <CircleAlert />,
                 title: "TRACE STATUS",
-                detail:
-                    tracePath.includes("flagged")
-                        ? "Flagged address reached through the active graph"
-                        : "No flagged address reached in the active graph",
+                detail: suspiciousReached
+                    ? "Suspicious address reached through the active graph"
+                    : "No suspicious address reached in the active graph",
             },
         ];
     }, [tracedNode, tracePath, traceEdges]);
@@ -1113,10 +1128,8 @@ export default function InvestigationPage() {
                                 label="TRANSACTIONS"
                                 value={
                                     tracedNode
-                                        ? String(
-                                            traceEdges.length,
-                                        )
-                                        : "128"
+                                        ? String(traceEdges.length)
+                                        : String(nodes[0]?.transactions ?? 0)
                                 }
                             />
                         </div>
@@ -1255,24 +1268,31 @@ export default function InvestigationPage() {
                                 <Behavior
                                     icon={<CircleAlert />}
                                     title="COUNTERPARTY CONCENTRATION"
-                                    detail={nodes.length > 0 ? `${nodes.length}` : "0"}
-                                />
+                                    detail={
+                                        riskSignals.fan_in?.detected
+                                            ? "DETECTED"
+                                            : "NOT DETECTED"
+                                }
+                            />
 
                                 <Behavior
                                     icon={<Activity />}
-                                    title="FAILED TRANSACTIONS"
-                                    detail="8.2%"
+                                    title="RAPID MOVEMENT"
+                                    detail={
+                                        riskSignals.rapid_movement?.detected
+                                            ? "DETECTED"
+                                            : "NOT DETECTED"
+                                    }
                                 />
 
                                 <Behavior
                                     icon={<GitBranch />}
                                     title="FORWARD MOVEMENT"
                                     detail={
-                                        tracePath.includes(
-                                            "flagged",
-                                        )
+                                        riskSignals.fan_out?.detected ||
+                                        riskSignals.rapid_movement?.detected
                                             ? "DETECTED"
-                                            : "OBSERVED"
+                                            : "NOT DETECTED"
                                     }
                                 />
                             </div>
@@ -1326,11 +1346,13 @@ export default function InvestigationPage() {
                                     RELATIONSHIP VIEW /{" "}
                                     {tracedNode
                                         ? `${Math.max(
-                                            tracePath.length -
-                                            1,
+                                            tracePath.length - 1,
                                             0,
                                         )} HOPS`
-                                        : "2 HOPS"}
+                                        : `${Math.max(
+                                            ...nodes.map((node) => node.depth ?? 0),
+                                            0,
+                                        )} HOPS`}
                                 </p>
                             </div>
 
@@ -2382,10 +2404,11 @@ function WorkspaceNode({
         <button
             type="button"
             onClick={onClick}
-            className={`group absolute ${node.position} z-20 -translate-x-1/2 -translate-y-1/2 outline-none ${isActiveTraceNode
-                ? "trace-node-active"
-                : ""
-                }`}
+            className={`group absolute ${node.position} z-20 -translate-x-1/2 -translate-y-1/2 outline-none ${
+                isActiveTraceNode
+                    ? "trace-node-active"
+                    : ""
+            }`}
             aria-label={`Inspect ${node.address}`}
         >
             {/* trace arrival ring */}
