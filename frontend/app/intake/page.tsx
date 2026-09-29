@@ -107,18 +107,7 @@ export default function IntakePage() {
                 }),
             });
 
-            const contentType = response.headers.get("content-type") || "";
-
-            let data: any;
-
-            if (contentType.includes("application/json")) {
-                data = await response.json();
-            } else {
-                const text = await response.text();
-                throw new Error(
-                    text || `Investigation request failed (${response.status}).`,
-                );
-            }
+            const data = await response.json();
 
             if (!response.ok) {
                 throw new Error(

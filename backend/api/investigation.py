@@ -64,7 +64,7 @@ def investigate_wallet(request: InvestigationRequest):
     except (ConnectionError, TimeoutError, RuntimeError, ValueError) as exc:
         raise HTTPException(
             status_code=502,
-            detail=f"Blockchain data retrieval failed: {exc}",
+            detail=f"Blockchain data retrieval failed: {type(exc).__name__}: {exc}",
         ) from exc
 
     # ---------------------------------------------------------------
